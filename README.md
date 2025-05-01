@@ -2,16 +2,13 @@
   
 # Raven XD
 <p align="center">
-    <img src="https://img.shields.io/github/issues/xia-mc/Raven-bS?style=flat" alt="issues">
+    <img src="https://img.shields.io/github/issues/oneachina/Neo-Raven-XD?style=flat" alt="issues">
     <img src="https://img.shields.io/badge/license-GPLV3-green" alt="License">
-    <img src="https://tokei.rs/b1/github/xia-mc/Raven-XD?category=code&style=flat" alt="Lines of code">
+    <img src="https://tokei.rs/b1/github/oneachina/Neo-Raven-XD?category=code&style=flat" alt="Lines of code">
 </p>
 
-[![Github Release Downloads](https://img.shields.io/github/downloads/xia-mc/Raven-bS/total?label=Github%20Release%20Downloads&style=flat-square)](https://github.com/xia-mc/Raven-bS/releases)
-<!--
-[![CurseForge Downloads](http://cf.way2muchnoise.eu/997222.svg?badge_style=flat)](https://www.curseforge.com/minecraft/mc-mods/cheatdetector)
-[![Modrinth Downloads](https://img.shields.io/modrinth/dt/QNVaUzHT?label=Modrinth%20Downloads&logo=Modrinth%20Downloads&style=flat-square)](https://modrinth.com/mod/cheatdetector)
--->
+[![Github Release Downloads](https://img.shields.io/github/downloads/oneachina/Neo-Raven-XD/total?label=Github%20Release%20Downloads&style=flat-square)](https://github.com/oneachina/Neo-Raven-XD/releases)
+
 
 Raven B4, but for those who can't afford it.
 
@@ -29,7 +26,7 @@ Raven B4, but not only for Hypixel.
 ### Steps:
 
 1. **Download the latest .jar file from the releases**:
-   - Download from [https://github.com/xia-mc/Raven-XD/releases](https://github.com/xia-mc/Raven-XD/releases)
+   - Download from [GitHub releases](https://github.com/oneachina/Neo-Raven-XD/releases)
    - This client requires Forge 1.8.9.
 
 2. **Put in mods folder of your .minecraft directory**:
@@ -61,7 +58,7 @@ Raven B4, but not only for Hypixel.
 4. **Clone the Repository**:
    - Run the following commands in the terminal or command prompt:
      ```bash
-     git clone --recursive https://github.com/xia-mc/Raven-XD.git
+     git clone --recursive https://github.com/oneachina/Neo-Raven-XD.git
      cd Raven-XD
      ```
 
@@ -82,11 +79,7 @@ Feel free to raise an issue or submit a pull request.
 
 If you want to co-develop this project with me, please contact me.
 
-You can also support us on [Patreon](https://www.patreon.com/xia__mc)!
-
 <div align="center">
-
-[!![-preview](https://github.com/user-attachments/assets/ac50e6e5-3227-4ee9-9881-2e7b8ba47861)](https://www.patreon.com/xia__mc)
 
 <img src="https://github.com/SAWARATSUKI/KawaiiLogos/blob/main/IntelliJ IDEA/IntelliJ IDEA.png" alt="Java" width="500" />
 
