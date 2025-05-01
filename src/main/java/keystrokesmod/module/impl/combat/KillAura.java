@@ -759,11 +759,15 @@ public class KillAura extends IAutoClicker {
         if (!Utils.nullCheck()) {
             return true;
         }
-        if (ModuleManager.bedAura.isEnabled() && !ModuleManager.bedAura.allowAura.isToggled() && ModuleManager.bedAura.currentBlock != null) {
+        // bedAura的空检查
+        if (ModuleManager.bedAura != null && ModuleManager.bedAura.isEnabled()
+                && !ModuleManager.bedAura.allowAura.isToggled()
+                && ModuleManager.bedAura.currentBlock != null) {
             return true;
         }
         if (Blink.isBlinking()) return true;
-        if (HypixelAntiVoid.getInstance() != null && HypixelAntiVoid.getInstance().blink.isEnabled()) return true;
+        if (HypixelAntiVoid.getInstance() != null
+                && HypixelAntiVoid.getInstance().blink.isEnabled()) return true;
         return mc.thePlayer.isDead;
     }
 
@@ -777,7 +781,7 @@ public class KillAura extends IAutoClicker {
         } else if (fixNoSlowFlag.isToggled() && blockingTime > (int) postDelay.getInput()) {
             unBlock();
             blockingTime = 0;
-        } else if (ModuleManager.scaffold.isEnabled()) {
+        } else if (ModuleManager.scaffold != null && ModuleManager.scaffold.isEnabled()) { // 空检查
             return true;
         }
         return mc.currentScreen != null && disableInInventory.isToggled();
