@@ -24,6 +24,8 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 group = "keystrokesmod"
 archivesBaseName = "raven-XD"
