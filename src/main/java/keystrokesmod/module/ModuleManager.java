@@ -117,7 +117,6 @@ public class ModuleManager {
     public static BedDefender bedDefender;
     public static ChestAura chestAura;
     public static AutoRod autoRod;
-    //    public static AbilitiesBedWars abilitiesBedWars;
     public static ClientTheme clientTheme;
     public static AutoChest autoChest;
     public static Teleport teleport;
@@ -126,7 +125,6 @@ public class ModuleManager {
     public static AutoGapple autoGapple;
     public static RemoteShop remoteShop;
     public static Regen regen;
-    public static ChatAI chatAI;
     public static keystrokesmod.module.impl.render.ArrayList arrayList;
     public static InvMove invMove;
     public static MotionCamera motionCamera;
@@ -241,7 +239,6 @@ public class ModuleManager {
         this.addModule(autoRegister = new AutoRegister());
         this.addModule(viewPackets = new ViewPackets());
         this.addModule(new FlagDetector());
-        this.addModule(chatAI = new ChatAI());
         this.addModule(new Test());
 
         // player

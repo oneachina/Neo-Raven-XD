@@ -2,7 +2,7 @@ package keystrokesmod.module.impl.world.scaffold.sprint;
 
 import keystrokesmod.event.PrePlayerInputEvent;
 import keystrokesmod.module.ModuleManager;
-import keystrokesmod.module.impl.exploit.disabler.hypixel.HypixelMotionDisabler;
+import keystrokesmod.module.impl.exploit.disabler.impl.HypixelMotionDisabler;
 import keystrokesmod.module.impl.world.Scaffold;
 import keystrokesmod.module.setting.impl.ButtonSetting;
 import keystrokesmod.utility.MoveUtil;
