@@ -11,7 +11,6 @@ import keystrokesmod.module.impl.client.Settings;
 import keystrokesmod.module.impl.exploit.ClientSpoofer;
 import keystrokesmod.module.impl.fun.NoteBot;
 import keystrokesmod.module.impl.minigames.DuelsStats;
-import keystrokesmod.module.impl.other.ChatAI;
 import keystrokesmod.module.impl.other.FakeChat;
 import keystrokesmod.module.impl.other.KillMessage;
 import keystrokesmod.module.impl.other.NameHider;
@@ -513,7 +512,6 @@ public class Commands {
                     return;
                 }
 
-                ModuleManager.chatAI.onChat(c.substring(5));
             } else if (!firstArg.equals("help") && !firstArg.equals("?")) {
                 if (firstArg.equals("shoutout")) {
                     print("&eCelebrities:", 1);
