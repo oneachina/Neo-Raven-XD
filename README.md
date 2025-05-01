@@ -82,5 +82,4 @@ If you want to co-develop this project with me, please contact me.
 <div align="center">
 
 <img src="https://github.com/SAWARATSUKI/KawaiiLogos/blob/main/IntelliJ IDEA/IntelliJ IDEA.png" alt="Java" width="500" />
-
 </div>

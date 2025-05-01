@@ -486,8 +486,15 @@ public final class Utils {
 
     public static boolean isTeamMate(Entity entity) {
         try {
-            if (mc.thePlayer.isOnSameTeam((EntityLivingBase) entity) || mc.thePlayer.getDisplayName().getUnformattedText().startsWith(entity.getDisplayName().getUnformattedText().substring(0, 2))) {
-                return true;
+            if (!(entity instanceof EntityPlayer)) {
+                return false;
+            }
+            String playerName = mc.thePlayer.getDisplayName().getUnformattedText();
+            String entityName = entity.getDisplayName().getUnformattedText();
+            if (playerName != null && entityName != null && entityName.length() >= 2) {
+                if (mc.thePlayer.isOnSameTeam((EntityLivingBase) entity) || playerName.startsWith(entityName.substring(0, 2))) {
+                    return true;
+                }
             }
         } catch (Exception e) {
             Utils.handleException(e);
@@ -514,7 +521,7 @@ public final class Utils {
         if (!Utils.nullCheck()) {
             return false;
         }
-        return (mc.currentScreen != null) && (mc.thePlayer.inventoryContainer != null) && (mc.thePlayer.inventoryContainer instanceof ContainerPlayer) && (mc.currentScreen instanceof GuiInventory);
+        return (mc.currentScreen != null) && (mc.thePlayer.inventoryContainer instanceof ContainerPlayer) && (mc.currentScreen instanceof GuiInventory);
     }
 
     public static boolean isSkyWars() {
