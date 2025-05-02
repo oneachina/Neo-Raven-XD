@@ -14,7 +14,7 @@ import static keystrokesmod.Client.mc;
 
 /**
  * @author TIMER_err
- * å¥½çš„è§†è§‰ï¼Œçµæ„Ÿæ¥è‡ªæœå†»
+ * ºÃµÄÊÓ¾õ£¬Áé¸ĞÀ´×Ô¹û¶³
  */
 @Getter
 public class GradientBlur {

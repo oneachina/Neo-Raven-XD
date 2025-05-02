@@ -60,7 +60,7 @@ public final class MoveableManager {
 
         if (Mouse.isButtonDown(0) && !disabled) {
             if (!isDragging) {
-                // å¼€å§‹æ‹–æ‹½
+                // ¿ªÊ¼ÍÏ×§
                 for (MoveableRender obj : moveObjs) {
                     if (isHover(obj.moveable, x, y)) {
                         draggingObj = obj;
@@ -69,17 +69,17 @@ public final class MoveableManager {
                     }
                 }
             } else if (draggingObj != null) {
-                // æ‹–æ‹½ä¸­
+                // ÍÏ×§ÖĞ
                 draggingObj.moveX(x - lastX);
                 draggingObj.moveY(y - lastY);
             }
         } else {
-            // é¼ æ ‡å·¦é”®æ¾å¼€ï¼Œç»“æŸæ‹–æ‹½
+            // Êó±ê×ó¼üËÉ¿ª£¬½áÊøÍÏ×§
             draggingObj = null;
             isDragging = false;
         }
 
-        // æ›´æ–°æ‰€æœ‰å¯¹è±¡
+        // ¸üĞÂËùÓĞ¶ÔÏó
         for (MoveableRender obj : moveObjs) {
             obj.update();
         }

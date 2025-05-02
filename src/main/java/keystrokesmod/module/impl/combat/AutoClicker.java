@@ -2,6 +2,7 @@ package keystrokesmod.module.impl.combat;
 
 import keystrokesmod.event.client.ClickEvent;
 import keystrokesmod.event.player.PreMotionEvent;
+import keystrokesmod.minecraft.MovingObjectPosition;
 import keystrokesmod.mixins.impl.client.PlayerControllerMPAccessor;
 import keystrokesmod.module.impl.combat.autoclicker.DragClickAutoClicker;
 import keystrokesmod.module.impl.combat.autoclicker.IAutoClicker;
@@ -14,7 +15,6 @@ import keystrokesmod.utility.CoolDown;
 import keystrokesmod.utility.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.util.MovingObjectPosition;
 import keystrokesmod.eventbus.annotations.EventListener;
 
 public class AutoClicker extends IAutoClicker {
@@ -61,7 +61,7 @@ public class AutoClicker extends IAutoClicker {
         directionY = (Math.random() - 0.5) * 4;
 
         if (clickSound.getInput() != 0) {
-            mc.thePlayer.playSound(
+            mc.player.playSound(
                     "keystrokesmod:click." + clickSound.getOptions()[(int) clickSound.getInput()].toLowerCase()
                     , 1, 1
             );
@@ -71,21 +71,14 @@ public class AutoClicker extends IAutoClicker {
     @Override
     public void onUpdate() {
         if (!coolDown.hasFinished() && this.jitter.isToggled()) {
-            mc.thePlayer.rotationYaw += (float) (((Math.random() - 0.5) * 400 / Minecraft.getDebugFPS()) * directionX);
-            mc.thePlayer.rotationPitch += (float) (((Math.random() - 0.5) * 400 / Minecraft.getDebugFPS()) * directionY) * mc.gameSettings.mouseSensitivity * 2;
+            mc.player.rotationYaw += (float) (((Math.random() - 0.5) * 400 / Minecraft.getDebugFPS()) * directionX);
+            mc.player.rotationPitch += (float) (((Math.random() - 0.5) * 400 / Minecraft.getDebugFPS()) * directionY) * mc.gameSettings.mouseSensitivity * 2;
         }
     }
 
     @Override
     public boolean click() {
         if (mc.currentScreen == null && HitSelect.canAttack()) {
-            if (mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-                if (breakBlocks.isToggled()) {
-                    return false;
-                } else {
-                    ((PlayerControllerMPAccessor) mc.playerController).setCurBlockDamageMP(0);
-                }
-            }
 
             Utils.sendClick(0, true);
             return true;

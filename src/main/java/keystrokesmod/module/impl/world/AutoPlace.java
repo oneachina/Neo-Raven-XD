@@ -3,6 +3,7 @@ package keystrokesmod.module.impl.world;
 import keystrokesmod.event.player.PostUpdateEvent;
 import keystrokesmod.event.player.PreUpdateEvent;
 import keystrokesmod.event.render.DrawBlockHighlightEvent;
+import keystrokesmod.minecraft.MovingObjectPosition;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.other.SlotHandler;
@@ -16,11 +17,10 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import keystrokesmod.eventbus.annotations.EventListener;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import org.lwjgl.input.Mouse;
 
 public class AutoPlace extends Module {
@@ -79,7 +79,7 @@ public class AutoPlace extends Module {
     }
 
     private void action() {
-        if (mc.currentScreen != null || mc.thePlayer.capabilities.isFlying) {
+        if (mc.currentScreen != null || mc.player.capabilities.isFlying) {
             return;
         }
         final ItemStack getHeldItem = SlotHandler.getHeldItem();
@@ -87,7 +87,7 @@ public class AutoPlace extends Module {
             return;
         }
         if (fastPlaceJump.isToggled() && holdRight.isToggled() && !ModuleManager.fastPlace.isEnabled() && Mouse.isButtonDown(1)) {
-            if (mc.thePlayer.motionY > 0.0) {
+            if (mc.player.motionY > 0.0) {
                 this.rd(1);
             } else if (!pitchCheck.isToggled()) {
                 this.rd(1000);
@@ -98,40 +98,12 @@ public class AutoPlace extends Module {
     @EventListener(priority = 2)
     public void bh(DrawBlockHighlightEvent ev) {
         if (Utils.nullCheck()) {
-            if (mc.currentScreen == null && !mc.thePlayer.capabilities.isFlying) {
-                ItemStack i = mc.thePlayer.getHeldItem();
-                if (i != null && i.getItem() instanceof ItemBlock) {
-                    MovingObjectPosition m = mc.objectMouseOver;
+            if (mc.currentScreen == null && !mc.player.capabilities.isFlying) {
+                ItemStack i = mc.player.getHeldItem(null);
+                if (i.getItem() instanceof ItemBlock) {
+                    RayTraceResult m = mc.objectMouseOver;
                     if (disableLeft.isToggled() && Mouse.isButtonDown(0)) {
                         return;
-                    }
-                    if (m != null && m.typeOfHit == MovingObjectType.BLOCK && m.sideHit != EnumFacing.UP && m.sideHit != EnumFacing.DOWN) {
-                        if (this.lm != null && (double) this.f < frameDelay.getInput()) {
-                            ++this.f;
-                        } else {
-                            this.lm = m;
-                            BlockPos pos = m.getBlockPos();
-                            if (this.lp == null || pos.getX() != this.lp.getX() || pos.getY() != this.lp.getY() || pos.getZ() != this.lp.getZ()) {
-                                Block b = mc.theWorld.getBlockState(pos).getBlock();
-                                if (b != null && b != Blocks.air && !(b instanceof BlockLiquid)) {
-                                    if (!holdRight.isToggled() || Mouse.isButtonDown(1)) {
-                                        long n = System.currentTimeMillis();
-                                        if (n - this.l >= minPlaceDelay.getInput()) {
-                                            this.l = n;
-                                            if (mc.playerController.onPlayerRightClick(mc.thePlayer, mc.theWorld, i, pos, m.sideHit, m.hitVec)) {
-                                                Reflection.setButton(1, true);
-                                                mc.thePlayer.swingItem();
-                                                mc.getItemRenderer().resetEquippedProgress();
-                                                Reflection.setButton(1, false);
-                                                this.lp = pos;
-                                                this.f = 0;
-                                            }
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }

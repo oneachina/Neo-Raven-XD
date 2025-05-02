@@ -2,6 +2,8 @@ package keystrokesmod.module.impl.combat;
 
 import keystrokesmod.event.render.Render3DEvent;
 import keystrokesmod.eventbus.annotations.EventListener;
+import keystrokesmod.minecraft.MovingObjectPosition;
+import keystrokesmod.minecraft.Vec3;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.setting.impl.ButtonSetting;
@@ -13,10 +15,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import keystrokesmod.event.client.MouseEvent;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -26,7 +28,7 @@ public class HitBox extends Module {
     public static SliderSetting multiplier;
     public static ButtonSetting playersOnly;
     public static ButtonSetting weaponOnly;
-    private static MovingObjectPosition mv;
+    private static RayTraceResult mv;
     public ButtonSetting showHitbox;
 
     public HitBox() {
@@ -61,23 +63,23 @@ public class HitBox extends Module {
     }
 
     public static EntityLivingBase getEntity(float partialTicks) {
-        if (mc.getRenderViewEntity() != null && mc.theWorld != null) {
+        if (mc.getRenderViewEntity() != null && mc.world != null) {
             mc.pointedEntity = null;
             Entity pointedEntity = null;
             double d0 = mc.playerController.extendedReach() ? 6.0 : (ModuleManager.reach.isEnabled() ? Utils.getRandomValue(Reach.min, Reach.max, Utils.getRandom()) : 3.0);
             mv = mc.getRenderViewEntity().rayTrace(d0, partialTicks);
             double d2 = d0;
-            Vec3 vec3 = mc.getRenderViewEntity().getPositionEyes(partialTicks);
+            Vec3 vec3 = (Vec3) mc.getRenderViewEntity().getPositionEyes(partialTicks);
 
             if (mv != null) {
                 d2 = mv.hitVec.distanceTo(vec3);
             }
 
-            Vec3 vec4 = mc.getRenderViewEntity().getLook(partialTicks);
+            Vec3 vec4 = (Vec3) mc.getRenderViewEntity().getLook(partialTicks);
             Vec3 vec5 = vec3.addVector(vec4.xCoord * d0, vec4.yCoord * d0, vec4.zCoord * d0);
-            Vec3 vec6 = null;
+            Vec3d vec6 = null;
             float f1 = 1.0F;
-            List<Entity> list = mc.theWorld.getEntitiesWithinAABBExcludingEntity(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec4.xCoord * d0, vec4.yCoord * d0, vec4.zCoord * d0).expand(f1, f1, f1));
+            List<Entity> list = mc.world.getEntitiesWithinAABBExcludingEntity(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec4.xCoord * d0, vec4.yCoord * d0, vec4.zCoord * d0).expand(f1, f1, f1));
             double d3 = d2;
 
             for (Object o : list) {
@@ -85,7 +87,7 @@ public class HitBox extends Module {
                 if (entity.canBeCollidedWith()) {
                     float ex = (float) ((double) entity.getCollisionBorderSize() * getExpand(entity));
                     AxisAlignedBB ax = entity.getEntityBoundingBox().expand(ex, ex, ex);
-                    MovingObjectPosition mop = ax.calculateIntercept(vec3, vec5);
+                    RayTraceResult mop = ax.calculateIntercept(vec3, vec5);
                     if (ax.isVecInside(vec3)) {
                         if (0.0D < d3 || d3 == 0.0D) {
                             pointedEntity = entity;

@@ -184,7 +184,7 @@ public class AimSimulator {
         if ((float) target > (float) current) {
             float dist1 = (float) target - (float) current;
             float dist2 = (float) current + 360 - (float) target;
-            if (dist1 > dist2) {  // å¦ä¸€è¾¹ç§»åŠ¨æ›´è¿‘
+            if (dist1 > dist2) {  // ÁíÒ»±ßÒÆ¶¯¸ü½ü
                 delta = -(float) current - 360 + (float) target;
             } else {
                 delta = dist1;
@@ -192,7 +192,7 @@ public class AimSimulator {
         } else if ((float) target < (float) current) {
             float dist1 = (float) current - (float) target;
             float dist2 = (float) target + 360 - (float) current;
-            if (dist1 > dist2) {  // å¦ä¸€è¾¹ç§»åŠ¨æ›´è¿‘
+            if (dist1 > dist2) {  // ÁíÒ»±ßÒÆ¶¯¸ü½ü
                 delta = (float) current + 360 + (float) target;
             } else {
                 delta = -dist1;

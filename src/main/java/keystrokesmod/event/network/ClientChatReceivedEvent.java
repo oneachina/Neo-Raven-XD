@@ -1,11 +1,10 @@
 package keystrokesmod.event.network;
 
 import keystrokesmod.eventbus.CancellableEvent;
+import keystrokesmod.minecraft.chat.IChatComponent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraft.util.IChatComponent;
-
 
 @EqualsAndHashCode(callSuper = true)
 @Data

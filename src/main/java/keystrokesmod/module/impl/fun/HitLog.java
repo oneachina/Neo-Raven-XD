@@ -12,8 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.play.server.S08PacketPlayerPosLook;
-import net.minecraft.util.AxisAlignedBB;
 import keystrokesmod.eventbus.annotations.EventListener;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +54,7 @@ public class HitLog extends Module {
                         Utils.sendMessage("Miss " + target.getName() + "'s " + hitPos.getEnglish() + " Cause " + reason.getEnglish() + " | Trying to predict " + predTicks + " ticks");
                         break;
                     case 1:
-                        Utils.sendMessage("ç©ºäº† " + target.getName() + "çš„" + hitPos.getChinese() + " åŸå›  " + reason.getChinese() + " | å°è¯•é¢„æµ‹ " + predTicks + " ticks");
+                        Utils.sendMessage("¿ÕÁË " + target.getName() + "µÄ" + hitPos.getChinese() + " Ô­Òò " + reason.getChinese() + " | ³¢ÊÔÔ¤²â " + predTicks + " ticks");
                         break;
                 }
             } else {
@@ -65,7 +63,7 @@ public class HitLog extends Module {
                         Utils.sendMessage("Hit " + target.getName() + "'s " + hitPos.getEnglish() + " | Trying to predict " + predTicks + " ticks | Health " + target.getHealth());
                         break;
                     case 1:
-                        Utils.sendMessage("å‘½ä¸­ " + target.getName() + "çš„" + hitPos.getChinese() + " | å°è¯•é¢„æµ‹ " + predTicks + " ticks | è¡€é‡ " + target.getHealth());
+                        Utils.sendMessage("ÃüÖĞ " + target.getName() + "µÄ" + hitPos.getChinese() + " | ³¢ÊÔÔ¤²â " + predTicks + " ticks | ÑªÁ¿ " + target.getHealth());
                         break;
                 }
             }
@@ -82,9 +80,9 @@ public class HitLog extends Module {
     @AllArgsConstructor
     @Getter
     enum Reason {
-        PRED_FAIL("Predicted failed", "é¢„æµ‹å¤±è´¥"),
+        PRED_FAIL("Predicted failed", "Ô¤²âÊ§°Ü"),
         WATCHDOG("Watchdog", "Watchdog"),
-        BLOCK("Blocking", "æ ¼æŒ¡");
+        BLOCK("Blocking", "¸ñµ²");
 
         private final String english;
         private final String chinese;
@@ -93,9 +91,9 @@ public class HitLog extends Module {
     @AllArgsConstructor
     @Getter
     public enum HitPos {
-        HEAD("head", "å¤´éƒ¨"),
-        BODY("body", "èº«ä½“"),
-        FOOT("foot", "è„š");
+        HEAD("head", "Í·²¿"),
+        BODY("body", "ÉíÌå"),
+        FOOT("foot", "½Å");
 
         private final String english;
         private final String chinese;

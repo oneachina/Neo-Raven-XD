@@ -18,10 +18,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
-import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
-import net.minecraft.network.play.client.C0DPacketCloseWindow;
 import keystrokesmod.eventbus.annotations.EventListener;
-import net.minecraft.network.play.client.C16PacketClientStatus;
 import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,7 +87,7 @@ public class InvManager extends Module {
 
     @EventListener
     public void onPreMotion(PreMotionEvent event) {
-        if (mc.thePlayer.ticksExisted <= 40) {
+        if (mc.player.ticksExisted <= 40) {
             return;
         }
 
@@ -142,11 +139,7 @@ public class InvManager extends Module {
             Collections.shuffle(inventorySlots);
 
         for (int i : inventorySlots) {
-            final ItemStack stack = mc.thePlayer.inventory.getStackInSlot(i);
-
-            if (stack == null) {
-                continue;
-            }
+            final ItemStack stack = mc.player.inventory.getStackInSlot(i);
 
             final Item item = stack.getItem();
 
@@ -154,11 +147,11 @@ public class InvManager extends Module {
                 this.throwItem(i);
             }
 
-            if (item == Items.arrow) {
-                totalArrows += stack.stackSize;
+            if (item == Items.ARROW) {
+                totalArrows += stack.getMaxStackSize();
                 arrowSlots.add(i);
-            } else if (item == Items.snowball || item == Items.egg) {
-                totalSnowballsEggs += stack.stackSize;
+            } else if (item == Items.SNOWBALL || item == Items.EGG) {
+                totalSnowballsEggs += stack.getMaxStackSize();
                 snowballEggSlots.add(i);
             }
 
@@ -167,25 +160,25 @@ public class InvManager extends Module {
                 final int reduction = this.armorReduction(stack);
                 switch (armor.armorType) {
                     case 0:
-                        if (helmet == -1 || reduction > armorReduction(mc.thePlayer.inventory.getStackInSlot(helmet))) {
+                        if (helmet == -1 || reduction > armorReduction(mc.player.inventory.getStackInSlot(helmet))) {
                             helmet = i;
                         }
                         break;
 
                     case 1:
-                        if (chestplate == -1 || reduction > armorReduction(mc.thePlayer.inventory.getStackInSlot(chestplate))) {
+                        if (chestplate == -1 || reduction > armorReduction(mc.player.inventory.getStackInSlot(chestplate))) {
                             chestplate = i;
                         }
                         break;
 
                     case 2:
-                        if (leggings == -1 || reduction > armorReduction(mc.thePlayer.inventory.getStackInSlot(leggings))) {
+                        if (leggings == -1 || reduction > armorReduction(mc.player.inventory.getStackInSlot(leggings))) {
                             leggings = i;
                         }
                         break;
 
                     case 3:
-                        if (boots == -1 || reduction > armorReduction(mc.thePlayer.inventory.getStackInSlot(boots))) {
+                        if (boots == -1 || reduction > armorReduction(mc.player.inventory.getStackInSlot(boots))) {
                             boots = i;
                         }
                         break;
@@ -195,7 +188,7 @@ public class InvManager extends Module {
             if (item instanceof ItemSword && (int) swordSlot.getInput() != 0) {
                 if (sword == -1) {
                     sword = i;
-                } else if (damage(stack) > damage(mc.thePlayer.inventory.getStackInSlot(sword))) {
+                } else if (damage(stack) > damage(mc.player.inventory.getStackInSlot(sword))) {
                     sword = i;
                 }
 
@@ -207,7 +200,7 @@ public class InvManager extends Module {
             if (item instanceof ItemPickaxe) {
                 if (pickaxe == -1) {
                     pickaxe = i;
-                } else if (mineSpeed(stack) > mineSpeed(mc.thePlayer.inventory.getStackInSlot(pickaxe))) {
+                } else if (mineSpeed(stack) > mineSpeed(mc.player.inventory.getStackInSlot(pickaxe))) {
                     pickaxe = i;
                 }
                 if (i != pickaxe) {
@@ -218,7 +211,7 @@ public class InvManager extends Module {
             if (item instanceof ItemAxe) {
                 if (axe == -1) {
                     axe = i;
-                } else if (mineSpeed(stack) > mineSpeed(mc.thePlayer.inventory.getStackInSlot(axe))) {
+                } else if (mineSpeed(stack) > mineSpeed(mc.player.inventory.getStackInSlot(axe))) {
                     axe = i;
                 }
 
@@ -230,7 +223,7 @@ public class InvManager extends Module {
             if (item instanceof ItemSpade) {
                 if (shovel == -1) {
                     shovel = i;
-                } else if (mineSpeed(stack) > mineSpeed(mc.thePlayer.inventory.getStackInSlot(shovel))) {
+                } else if (mineSpeed(stack) > mineSpeed(mc.player.inventory.getStackInSlot(shovel))) {
                     shovel = i;
                 }
 
@@ -248,7 +241,7 @@ public class InvManager extends Module {
             if (item instanceof ItemBow) {
                 if (bow == -1) {
                     bow = i;
-                } else if (power(stack) > power(mc.thePlayer.inventory.getStackInSlot(bow))) {
+                } else if (power(stack) > power(mc.player.inventory.getStackInSlot(bow))) {
                     bow = i;
                 }
 
@@ -274,7 +267,7 @@ public class InvManager extends Module {
 
         if (armor.isToggled()) {
             for (int i = 0; i < INVENTORY_SLOTS; i++) {
-                final ItemStack stack = mc.thePlayer.inventory.getStackInSlot(i);
+                final ItemStack stack = mc.player.inventory.getStackInSlot(i);
 
                 if (stack == null) {
                     continue;
@@ -343,7 +336,7 @@ public class InvManager extends Module {
 
             if (!blockStacks.isEmpty()) {
                 int slot = blockStacks.get(0).getNumber();
-                if (slot != this.blockSlot.getInput() - 1)  // ‰øÆÂ§çËÄÅËôéÊú∫
+                if (slot != this.blockSlot.getInput() - 1)  // –ﬁ∏¥¿œª¢ª˙
                     this.moveItem(slot, (int) this.blockSlot.getInput() - 37);
             }
         }
@@ -355,7 +348,7 @@ public class InvManager extends Module {
                 if (excessBlocks <= 0) {
                     break;
                 }
-                ItemStack stack = mc.thePlayer.inventory.getStackInSlot(slot);
+                ItemStack stack = mc.player.inventory.getStackInSlot(slot);
 
                 int stackSize = stack.stackSize;
 
@@ -375,7 +368,7 @@ public class InvManager extends Module {
                 if (excessArrows <= 0) {
                     break;
                 }
-                ItemStack stack = mc.thePlayer.inventory.getStackInSlot(slot);
+                ItemStack stack = mc.player.inventory.getStackInSlot(slot);
                 int stackSize = stack.stackSize;
                 if (excessArrows >= stackSize) {
                     this.throwItem(slot);
@@ -393,7 +386,7 @@ public class InvManager extends Module {
                 if (excessSnowballsEggs <= 0) {
                     break;
                 }
-                ItemStack stack = mc.thePlayer.inventory.getStackInSlot(slot);
+                ItemStack stack = mc.player.inventory.getStackInSlot(slot);
                 int stackSize = stack.stackSize;
                 if (excessSnowballsEggs >= stackSize) {
                     this.throwItem(slot);
@@ -432,7 +425,7 @@ public class InvManager extends Module {
 
             if (!foodStacks.isEmpty()) {
                 int slot = foodStacks.get(0).getNumber();
-                if (slot != this.foodSlot.getInput() - 1)  // ‰øÆÂ§çËÄÅËôéÊú∫
+                if (slot != this.foodSlot.getInput() - 1)  // –ﬁ∏¥¿œª¢ª˙
                     this.moveItem(slot, (int) foodSlot.getInput() - 37);
             }
         }
@@ -465,7 +458,7 @@ public class InvManager extends Module {
     private void closeInventory() {
         if (this.open) {
             if ((int) mode.getInput() != 2)
-                PacketUtils.sendPacket(new C0DPacketCloseWindow(mc.thePlayer.inventoryContainer.windowId));
+                PacketUtils.sendPacket(new C0DPacketCloseWindow(mc.player.inventoryContainer.windowId));
             this.open = false;
         }
     }
@@ -487,7 +480,7 @@ public class InvManager extends Module {
                 this.openInventory();
             }
 
-            mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, this.slot(slot), 1, 4, mc.thePlayer);
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.slot(slot), 1, 4, mc.player);
 
             this.nextClick = Math.round(Utils.randomizeDouble(minCleanDelay.getInput(), maxCleanDelay.getInput()));
             this.stopwatch.start();
@@ -501,13 +494,13 @@ public class InvManager extends Module {
                 this.openInventory();
             }
 
-            mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, this.slot(slot), 0, 0, mc.thePlayer);
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.slot(slot), 0, 0, mc.player);
 
             for (int i = 0; i < amountLeft; i++) {
-                mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, this.slot(slot), 1, 0, mc.thePlayer);
+                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.slot(slot), 1, 0, mc.player);
             }
 
-            mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, -999, 0, 0, mc.thePlayer);
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, -999, 0, 0, mc.player);
 
             this.nextClick = Math.round(Utils.randomizeDouble(minCleanDelay.getInput(), maxCleanDelay.getInput()));
             this.stopwatch.start();
@@ -522,7 +515,7 @@ public class InvManager extends Module {
                 this.openInventory();
             }
 
-            mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, this.slot(slot), this.slot(destination), 2, mc.thePlayer);
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.slot(slot), this.slot(destination), 2, mc.player);
 
             this.nextClick = Math.round(Utils.randomizeDouble(minSortDelay.getInput(), maxSortDelay.getInput()));
             this.stopwatch.start();
@@ -537,7 +530,7 @@ public class InvManager extends Module {
                 this.openInventory();
             }
 
-            mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, this.slot(slot), 0, 1, mc.thePlayer);
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.slot(slot), 0, 1, mc.player);
 
             this.nextClick = Math.round(Utils.randomizeDouble(minArmorDelay.getInput(), maxArmorDelay.getInput()));
             this.stopwatch.start();

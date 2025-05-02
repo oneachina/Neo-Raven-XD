@@ -1,5 +1,7 @@
 package keystrokesmod.module.impl.combat;
 
+import keystrokesmod.minecraft.MovingObjectPosition;
+import keystrokesmod.minecraft.Vec3;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.setting.impl.ButtonSetting;
@@ -9,11 +11,10 @@ import keystrokesmod.utility.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import keystrokesmod.event.client.MouseEvent;
 import keystrokesmod.eventbus.annotations.EventListener;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class Reach extends Module {
         if (Utils.nullCheck()
                 && (!weaponOnly.isToggled() || Utils.holdingWeapon())
                 && (!movingOnly.isToggled() || Utils.isMoving())
-                && (!sprintOnly.isToggled() || mc.thePlayer.isSprinting())
+                && (!sprintOnly.isToggled() || mc.player.isSprinting())
                 && (chance.getInput() == 100 || Math.random() * 100 > chance.getInput())
         ) {
 
@@ -51,13 +52,13 @@ public class Reach extends Module {
             Object[] o = getEntity(r);
 
             if (o != null) {
-                if (!RotationUtils.rayCastIgnoreWall(mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch, (EntityLivingBase) o[0]))
+                if (!RotationUtils.rayCastIgnoreWall(mc.player.rotationYaw, mc.player.rotationPitch, (EntityLivingBase) o[0]))
                     return;
-                if (!hitThroughBlocks.isToggled() && RotationUtils.rayCast(r, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch) != null)
+                if (!hitThroughBlocks.isToggled() && RotationUtils.rayCast(r, mc.player.rotationYaw, mc.player.rotationPitch) != null)
                     return;
 
                 Entity en = (Entity) o[0];
-                mc.objectMouseOver = new MovingObjectPosition(en, (Vec3) o[1]);
+                mc.objectMouseOver = new RayTraceResult(en, (Vec3) o[1]);
                 mc.pointedEntity = en;
             }
         }
@@ -77,16 +78,16 @@ public class Reach extends Module {
             return null;
         } else {
             mc.mcProfiler.startSection("pick");
-            Vec3 zz3 = zz2.getPositionEyes(1.0F);
+            Vec3 zz3 = (Vec3) zz2.getPositionEyes(1.0F);
             Vec3 zz4;
             if (rotations != null) {
                 zz4 = RotationUtils.getVectorForRotation(rotations[1], rotations[0]);
             } else {
-                zz4 = zz2.getLook(1.0F);
+                zz4 = (Vec3) zz2.getLook(1.0F);
             }
             Vec3 zz5 = zz3.addVector(zz4.xCoord * reach, zz4.yCoord * reach, zz4.zCoord * reach);
-            Vec3 hitVec = null;
-            List<Entity> zz8 = mc.theWorld.getEntitiesWithinAABBExcludingEntity(zz2, zz2.getEntityBoundingBox().addCoord(zz4.xCoord * reach, zz4.yCoord * reach, zz4.zCoord * reach).expand(1.0D, 1.0D, 1.0D));
+            Object hitVec = null;
+            List<Entity> zz8 = mc.world.getEntitiesWithinAABBExcludingEntity(zz2, zz2.getEntityBoundingBox().addCoord(zz4.xCoord * reach, zz4.yCoord * reach, zz4.zCoord * reach).expand(1.0D, 1.0D, 1.0D));
             double zz9 = reach;
 
             for (Entity object : zz8) {
@@ -94,7 +95,7 @@ public class Reach extends Module {
                     float ex = (float) ((double) object.getCollisionBorderSize() * HitBox.getExpand(object));
                     AxisAlignedBB zz13 = object.getEntityBoundingBox().expand(ex, ex, ex);
                     zz13 = zz13.expand(expand, expand, expand);
-                    MovingObjectPosition zz14 = zz13.calculateIntercept(zz3, zz5);
+                    RayTraceResult zz14 = zz13.calculateIntercept(zz3, zz5);
                     if (zz13.isVecInside(zz3)) {
                         if (0.0D < zz9 || zz9 == 0.0D) {
                             entity = object;
@@ -104,7 +105,7 @@ public class Reach extends Module {
                     } else if (zz14 != null) {
                         double zz15 = zz3.distanceTo(zz14.hitVec);
                         if (zz15 < zz9 || zz9 == 0.0D) {
-                            if (object == zz2.ridingEntity) {
+                            if (object == zz2.getRidingEntity()) {
                                 if (zz9 == 0.0D) {
                                     entity = object;
                                     hitVec = zz14.hitVec;

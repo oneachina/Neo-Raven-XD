@@ -6,22 +6,22 @@ import keystrokesmod.module.setting.impl.ModeSetting;
 import keystrokesmod.utility.PacketUtils;
 import keystrokesmod.utility.Utils;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.play.client.C01PacketChatMessage;
-import net.minecraft.network.play.server.S13PacketDestroyEntities;
+import net.minecraft.network.play.client.CPacketChatMessage;
 import keystrokesmod.event.network.AttackEntityEvent;
 import keystrokesmod.eventbus.annotations.EventListener;
+import net.minecraft.network.play.server.SPacketDestroyEntities;
 import org.jetbrains.annotations.NotNull;
 
 public class KillMessage extends Module {
     public static final String[] BIPAS_MESSAGE = {
-            "Mit Icarus w√§re das nicht passiert",
+            "Mit Icarus w re das nicht passiert",
             "POV: Icarus",
             "Nova is 'THE BEST CLIENT 2024', trust, no auto ban",
             "Vesper ist kein Exitscam, vertrau",
             "Spielst du Fortnite?",
             "Welcome to Meist... Meist Hacks?... Was ist den Meist Hacks?",
             "POV Icarus... Und jetzt einmal kurz... POV Augustus...",
-            "Ah... Doof gelaufen f√ºr Augustus... Vielleicht n√§chstes Mal...",
+            "Ah... Doof gelaufen f®πr Augustus... Vielleicht n?chstes Mal...",
             "IQ Zellen",
             "Bro paid for a cheat to lose against me",
             "It's only cheating when you get caught!",
@@ -33,7 +33,7 @@ public class KillMessage extends Module {
             "RAT im Clientlauncher / Ich wurde geRATTED!",
             "ESound Calling",
             "Adapt ist gut",
-            "D√ºmmer als Toastbrot",
+            "D®πmmer als Toastbrot",
             "Jetzt erstmal 10 Minuten Rage Stream",
             "'Nius ist eine neutrale Quelle'~Verschmxtztxcole(geht so leicht in die rechte Richtung)",
             "'Alice Weidel ist nicht rechts'~Verschmxtztxcole(geht so leicht in die rechte Richtung)",
@@ -42,7 +42,7 @@ public class KillMessage extends Module {
             "slurp",
             "Polar is always watching",
             "e.setYaw(RotationUtils.serverYaw)",
-            "Aus Protest Vernunft w√§hlen ~ FDP",
+            "Aus Protest Vernunft w?hlen ~ FDP",
             "Unser Client zuerst ~ FDP",
             "Piwo",
             "Bottom Text"
@@ -73,18 +73,18 @@ public class KillMessage extends Module {
             lastAttack = null;
 
         if (lastAttack != null && lastAttack.isDead) {
-            PacketUtils.sendPacket(new C01PacketChatMessage(getKillMessage()));
+            PacketUtils.sendPacket(new CPacketChatMessage(getKillMessage()));
             lastAttack = null;
         }
     }
 
     @EventListener
     public void onReceivePacket(@NotNull ReceivePacketEvent event) {
-        if (lastAttack != null && event.getPacket() instanceof S13PacketDestroyEntities) {
-            S13PacketDestroyEntities packet = (S13PacketDestroyEntities) event.getPacket();
+        if (lastAttack != null && event.getPacket() instanceof SPacketDestroyEntities) {
+            SPacketDestroyEntities packet = (SPacketDestroyEntities) event.getPacket();
             for (int id : packet.getEntityIDs()) {
                 if (id == lastAttack.getEntityId()) {
-                    PacketUtils.sendPacket(new C01PacketChatMessage(getKillMessage()));
+                    PacketUtils.sendPacket(new CPacketChatMessage(getKillMessage()));
                     lastAttack = null;
                     return;
                 }
@@ -95,7 +95,7 @@ public class KillMessage extends Module {
     private String getKillMessage() {
         switch ((int) mode.getInput()) {
             case 0:
-                return "‰Ω†‰ª¨Â•ΩÔºåÊàëÂè´Esound„ÄÇ‰Ω†Â∑≤ÁªèË¢´02ÂºÄÂèëÁöÑNeverloseÂáªÊùÄ";
+                return "ƒ„√«∫√£¨Œ“Ω–Esound°£ƒ„“—æ≠±ª02ø™∑¢µƒNeverloseª˜…±";
             case 1:
                 return killMessage;
             case 2:

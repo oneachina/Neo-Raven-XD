@@ -50,7 +50,7 @@ public class AutoWho extends Module {
                 if (hideMessage.isToggled()) {
                     online.append(networkPlayerInfo.getGameProfile().getName()).append(", ");
                 } else {
-                    online.append(ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName())).append("�").append("7, ");
+                    online.append(ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName())).append("?").append("7, ");
                 }
             }
             if (hideMessage.isToggled()) {

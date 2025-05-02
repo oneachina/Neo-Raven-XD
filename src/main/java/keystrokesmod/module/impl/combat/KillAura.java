@@ -40,10 +40,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.client.*;
-import net.minecraft.network.play.server.S2FPacketSetSlot;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
@@ -520,7 +516,7 @@ public class KillAura extends IAutoClicker {
             return;
         }
         if (Utils.holdingSword() && (mc.thePlayer.isBlocking() || block.get())) {
-            if (e.getPacket() instanceof S2FPacketSetSlot) {
+            if (e.getPacket() != null) {
                 if (mc.thePlayer.inventory.currentItem == ((S2FPacketSetSlot) e.getPacket()).func_149173_d() - 36 && mc.currentScreen == null) {
                     if (((S2FPacketSetSlot) e.getPacket()).func_149174_e() == null || (((S2FPacketSetSlot) e.getPacket()).func_149174_e().getItem() != mc.thePlayer.getHeldItem().getItem())) {
                         return;
@@ -759,7 +755,7 @@ public class KillAura extends IAutoClicker {
         if (!Utils.nullCheck()) {
             return true;
         }
-        // bedAuraçš„ç©ºæ£€æŸ¥
+        // bedAuraµÄ¿Õ¼ì²é
         if (ModuleManager.bedAura != null && ModuleManager.bedAura.isEnabled()
                 && !ModuleManager.bedAura.allowAura.isToggled()
                 && ModuleManager.bedAura.currentBlock != null) {
@@ -781,7 +777,7 @@ public class KillAura extends IAutoClicker {
         } else if (fixNoSlowFlag.isToggled() && blockingTime > (int) postDelay.getInput()) {
             unBlock();
             blockingTime = 0;
-        } else if (ModuleManager.scaffold != null && ModuleManager.scaffold.isEnabled()) { // ç©ºæ£€æŸ¥
+        } else if (ModuleManager.scaffold != null && ModuleManager.scaffold.isEnabled()) { // ¿Õ¼ì²é
             return true;
         }
         return mc.currentScreen != null && disableInInventory.isToggled();

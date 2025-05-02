@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 @SuppressWarnings("unused")
 public final class ReflectionUtils {
     /**
-     * è°ƒç”¨æ–¹æ³•
+     * µ÷ÓÃ·½·¨
      */
     @SuppressWarnings("unchecked")
     public static <T> T call(@NotNull Object object, @NotNull String method, Object... params) {
@@ -29,7 +29,7 @@ public final class ReflectionUtils {
     }
 
     /**
-     * è°ƒç”¨æ–¹æ³•ï¼Œå¹¶æŒ‡å®šç±»å‹
+     * µ÷ÓÃ·½·¨£¬²¢Ö¸¶¨ÀàĞÍ
      */
     @SuppressWarnings("unchecked")
     public static <T> T call(@NotNull Object object, @NotNull String method,
@@ -71,7 +71,7 @@ public final class ReflectionUtils {
     private static final Map<Method, Consumer<?>> fastMethodMap = new Object2ObjectOpenHashMap<>();
 
     /**
-     * è·å–æ–¹æ³•ï¼Œé€’å½’æŸ¥æ‰¾çˆ¶ç±»ä¸­çš„æ–¹æ³•
+     * »ñÈ¡·½·¨£¬µİ¹é²éÕÒ¸¸ÀàÖĞµÄ·½·¨
      */
     private static @NotNull Method getMethod(@NotNull MethodData data) {
         Method result = methodMap.get(data);
@@ -86,14 +86,14 @@ public final class ReflectionUtils {
                 methodMap.put(data, target);
                 return target;
             } catch (NoSuchMethodException e) {
-                currentClass = currentClass.getSuperclass();  // ç»§ç»­æŸ¥æ‰¾çˆ¶ç±»
+                currentClass = currentClass.getSuperclass();  // ¼ÌĞø²éÕÒ¸¸Àà
             }
         }
         throw new RuntimeException("Method not found: " + data.getMethod());
     }
 
     /**
-     * è·å–å­—æ®µï¼Œé€’å½’æŸ¥æ‰¾çˆ¶ç±»ä¸­çš„å­—æ®µ
+     * »ñÈ¡×Ö¶Î£¬µİ¹é²éÕÒ¸¸ÀàÖĞµÄ×Ö¶Î
      */
     private static @NotNull Field getField(@NotNull FieldData data) {
         Field result = fieldMap.get(data);
@@ -114,14 +114,14 @@ public final class ReflectionUtils {
                 fieldMap.put(data, target);
                 return target;
             } catch (NoSuchFieldException e) {
-                currentClass = currentClass.getSuperclass();  // ç»§ç»­æŸ¥æ‰¾çˆ¶ç±»
+                currentClass = currentClass.getSuperclass();  // ¼ÌĞø²éÕÒ¸¸Àà
             }
         }
         throw new RuntimeException("Field not found: " + data.getField());
     }
 
     /**
-     * è°ƒç”¨é™æ€æ–¹æ³•
+     * µ÷ÓÃ¾²Ì¬·½·¨
      */
     @SuppressWarnings("unchecked")
     public static <T> T callDeclared(@NotNull Class<?> aClass, @NotNull String method, Object... params) {
@@ -135,7 +135,7 @@ public final class ReflectionUtils {
     }
 
     /**
-     * è·å–å­—æ®µå€¼
+     * »ñÈ¡×Ö¶ÎÖµ
      */
     @SuppressWarnings("unchecked")
     public static <T> T get(@NotNull Object object, @NotNull String field) {
@@ -149,7 +149,7 @@ public final class ReflectionUtils {
     }
 
     /**
-     * è·å–é™æ€å­—æ®µå€¼
+     * »ñÈ¡¾²Ì¬×Ö¶ÎÖµ
      */
     @SuppressWarnings("unchecked")
     public static <T> T getDeclared(@NotNull Class<?> aClass, @NotNull String field) {
@@ -163,7 +163,7 @@ public final class ReflectionUtils {
     }
 
     /**
-     * è®¾ç½®å­—æ®µå€¼
+     * ÉèÖÃ×Ö¶ÎÖµ
      */
     public static void set(@NotNull Object object, @NotNull String field, Object value) {
         final FieldData data = new FieldData(object.getClass(), field);
@@ -176,7 +176,7 @@ public final class ReflectionUtils {
     }
 
     /**
-     * è®¾ç½®é™æ€å­—æ®µå€¼
+     * ÉèÖÃ¾²Ì¬×Ö¶ÎÖµ
      */
     public static void setDeclared(@NotNull Class<?> aClass, @NotNull String field, Object value) {
         final FieldData data = new FieldData(aClass, field);
