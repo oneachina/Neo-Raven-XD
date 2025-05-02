@@ -1,6 +1,7 @@
 package keystrokesmod.script;
 
 import keystrokesmod.Client;
+import keystrokesmod.minecraft.MovingObjectPosition;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.combat.KillAura;
@@ -28,10 +29,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.network.Packet;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -56,7 +54,7 @@ public class ScriptDefaults {
         public static final String colorSymbol = "§";
 
         public static boolean allowFlying() {
-            return mc.thePlayer.capabilities.allowFlying;
+            return mc.player.capabilities.allowFlying;
         }
 
         public static void async(Runnable method) {
@@ -64,7 +62,7 @@ public class ScriptDefaults {
         }
 
         public static int getSlot() {
-            return mc.thePlayer.inventory.currentItem;
+            return mc.player.inventory.currentItem;
         }
 
         public static int getFPS() {
@@ -72,7 +70,7 @@ public class ScriptDefaults {
         }
 
         public static void chat(String message) {
-            mc.thePlayer.sendChatMessage(message);
+            mc.player.sendChatMessage(message);
         }
 
         public static void print(String string) {
@@ -80,23 +78,23 @@ public class ScriptDefaults {
         }
 
         public static int getFontHeight() {
-            return mc.fontRendererObj.FONT_HEIGHT;
+            return mc.fontRenderer.FONT_HEIGHT;
         }
 
         public static void setTimer(float timer) {
-            Utils.getTimer().timerSpeed = timer;
+            Utils.getTimer().renderPartialTicks = timer;
         }
 
         public static int getFontWidth(String text) {
-            return mc.fontRendererObj.getStringWidth(text);
+            return mc.fontRenderer.getStringWidth(text);
         }
 
         public static boolean isCreative() {
-            return mc.thePlayer.capabilities.isCreativeMode;
+            return mc.player.capabilities.isCreativeMode;
         }
 
         public static boolean isFlying() {
-            return mc.thePlayer.capabilities.isFlying;
+            return mc.player.capabilities.isFlying;
         }
 
         public static void attack(Entity entity) {
@@ -108,15 +106,15 @@ public class ScriptDefaults {
         }
 
         public static void setFlying(boolean flying) {
-            mc.thePlayer.capabilities.isFlying = flying;
+            mc.player.capabilities.isFlying = flying;
         }
 
         public static void setJump(boolean jump) {
-            mc.thePlayer.setJumping(jump);
+            mc.player.setJumping(jump);
         }
 
         public static void jump() {
-            mc.thePlayer.jump();
+            mc.player.jump();
         }
 
         public static void log(String message) {
@@ -132,18 +130,18 @@ public class ScriptDefaults {
         }
 
         public static void setSneak(boolean sneak) {
-            mc.thePlayer.setSneaking(sneak);
+            mc.player.setSneaking(sneak);
         }
 
         public static Entity getPlayer() {
-            if (ScriptManager.localPlayer == null || mc.thePlayer == null || ScriptManager.localPlayer.entity != mc.thePlayer) {
-                ScriptManager.localPlayer = new Entity(mc.thePlayer);
+            if (ScriptManager.localPlayer == null || mc.player == null || ScriptManager.localPlayer.entity != mc.player) {
+                ScriptManager.localPlayer = new Entity(mc.player);
             }
             return ScriptManager.localPlayer;
         }
 
         public static Object[] raycastBlock(double distance) {
-            return raycastBlock(distance, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch);
+            return raycastBlock(distance, mc.player.rotationYaw, mc.player.rotationPitch);
         }
 
         public static Object[] raycastBlock(double distance, float yaw, float pitch) {
@@ -155,7 +153,7 @@ public class ScriptDefaults {
         }
 
         public static Object[] raycastEntity(double distance) {
-            return raycastEntity(distance, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch);
+            return raycastEntity(distance, mc.player.rotationYaw, mc.player.rotationPitch);
         }
 
         public static Object[] raycastEntity(double distance, float yaw, float pitch) {
@@ -163,19 +161,19 @@ public class ScriptDefaults {
             if (hit == null || hit.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
                 return null;
             }
-            return new Object[]{new Entity(hit.entityHit), new Vec3(hit.hitVec.xCoord, hit.hitVec.yCoord, hit.hitVec.zCoord), mc.thePlayer.getDistanceSqToEntity(hit.entityHit)};
+            return new Object[]{new Entity(hit.entityHit), new Vec3(hit.hitVec.xCoord, hit.hitVec.yCoord, hit.hitVec.zCoord), mc.player.getDistanceSqToEntity(hit.entityHit)};
         }
 
         public static Vec3 getMotion() {
-            return new Vec3(mc.thePlayer.motionX, mc.thePlayer.motionY, mc.thePlayer.motionZ);
+            return new Vec3(mc.player.motionX, mc.player.motionY, mc.player.motionZ);
         }
 
         public static void ping() {
-            mc.thePlayer.playSound("note.pling", 1.0f, 1.0f);
+            mc.player.playSound("note.pling", 1.0f, 1.0f);
         }
 
         public static void playSound(String name, float volume, float pitch) {
-            mc.thePlayer.playSound(name, volume, pitch);
+            mc.player.playSound(name, volume, pitch);
         }
 
         public static boolean isMoving() {
@@ -183,11 +181,11 @@ public class ScriptDefaults {
         }
 
         public static boolean isJump() {
-            return mc.thePlayer.movementInput.jump;
+            return mc.player.movementInput.jump;
         }
 
         public static float getStrafe() {
-            return mc.thePlayer.moveStrafing;
+            return mc.player.moveStrafing;
         }
 
         public static void sleep(int ms) {
@@ -200,11 +198,11 @@ public class ScriptDefaults {
         }
 
         public static float getForward() {
-            return mc.thePlayer.moveForward;
+            return mc.player.moveForward;
         }
 
         public static void closeScreen() {
-            mc.thePlayer.closeScreen();
+            mc.player.closeScreen();
         }
 
         public static String getScreen() {
@@ -220,7 +218,7 @@ public class ScriptDefaults {
             if (packet1 == null) {
                 return;
             }
-            mc.thePlayer.sendQueue.addToSendQueue(packet1);
+            mc.player.sendQueue.addToSendQueue(packet1);
         }
 
         public static void sendPacketNoEvent(CPacket packet) {
@@ -232,13 +230,13 @@ public class ScriptDefaults {
         }
 
         public static void dropItem(boolean dropStack) {
-            mc.thePlayer.dropOneItem(dropStack);
+            mc.player.dropOneItem(dropStack);
         }
 
         public static void setMotion(double x, double y, double z) {
-            mc.thePlayer.motionX = x;
-            mc.thePlayer.motionY = y;
-            mc.thePlayer.motionZ = z;
+            mc.player.motionX = x;
+            mc.player.motionY = y;
+            mc.player.motionZ = z;
         }
 
         public static void setSpeed(double speed) {
@@ -246,15 +244,15 @@ public class ScriptDefaults {
         }
 
         public static void setSlot(int slot) {
-            mc.thePlayer.inventory.currentItem = slot;
+            mc.player.inventory.currentItem = slot;
         }
 
         public static void setForward(float forward) {
-            mc.thePlayer.moveForward = forward;
+            mc.player.moveForward = forward;
         }
 
         public static void setStrafe(float strafe) {
-            mc.thePlayer.moveStrafing = strafe;
+            mc.player.moveStrafing = strafe;
         }
 
         public static String getServerIP() {
@@ -271,11 +269,11 @@ public class ScriptDefaults {
         }
 
         public static void setSprinting(boolean sprinting) {
-            mc.thePlayer.setSprinting(sprinting);
+            mc.player.setSprinting(sprinting);
         }
 
         public static void swing() {
-            mc.thePlayer.swingItem();
+            mc.player.swingItem();
         }
 
         public static World getWorld() {
@@ -296,7 +294,7 @@ public class ScriptDefaults {
 
         public static class inventory {
             public static void click(int slot, int button, int mode) {
-                mc.playerController.windowClick(mc.thePlayer.openContainer.windowId, slot, button, mode, mc.thePlayer);
+                mc.playerController.windowClick(mc.player.openContainer.windowId, slot, button, mode, mc.player);
             }
 
             @SuppressWarnings("unchecked")
@@ -323,8 +321,8 @@ public class ScriptDefaults {
 
             @SuppressWarnings("ConstantValue")
             public static String getChest() {
-                if (mc.thePlayer.openContainer instanceof ContainerChest) {
-                    ContainerChest chest = (ContainerChest) mc.thePlayer.openContainer;
+                if (mc.player.openContainer instanceof ContainerChest) {
+                    ContainerChest chest = (ContainerChest) mc.player.openContainer;
                     if (chest == null) {
                         return "";
                     }
@@ -351,13 +349,13 @@ public class ScriptDefaults {
             }
 
             public static int getSize() {
-                return mc.thePlayer.inventory.getSizeInventory();
+                return mc.player.inventory.getSizeInventory();
             }
 
             @SuppressWarnings("ConstantValue")
             public static int getChestSize() {
-                if (mc.thePlayer.openContainer instanceof ContainerChest) {
-                    ContainerChest chest = (ContainerChest) mc.thePlayer.openContainer;
+                if (mc.player.openContainer instanceof ContainerChest) {
+                    ContainerChest chest = (ContainerChest) mc.player.openContainer;
                     if (chest == null) {
                         return -1;
                     }
@@ -367,15 +365,15 @@ public class ScriptDefaults {
             }
 
             public static ItemStack getStackInSlot(int slot) {
-                if (mc.thePlayer.inventory.getStackInSlot(slot) == null) {
+                if (mc.player.inventory.getStackInSlot(slot) == null) {
                     return null;
                 }
-                return new ItemStack(mc.thePlayer.inventory.getStackInSlot(slot));
+                return new ItemStack(mc.player.inventory.getStackInSlot(slot));
             }
 
             public static ItemStack getStackInChestSlot(int slot) {
-                if (mc.thePlayer.openContainer instanceof ContainerChest) {
-                    ContainerChest chest = (ContainerChest) mc.thePlayer.openContainer;
+                if (mc.player.openContainer instanceof ContainerChest) {
+                    ContainerChest chest = (ContainerChest) mc.player.openContainer;
                     if (chest.getLowerChestInventory().getStackInSlot(slot) == null) {
                         return null;
                     }
@@ -385,7 +383,7 @@ public class ScriptDefaults {
             }
 
             public static void open() {
-                mc.displayGuiScreen(new GuiInventory(mc.thePlayer));
+                mc.displayGuiScreen(new GuiInventory(mc.player));
             }
         }
 

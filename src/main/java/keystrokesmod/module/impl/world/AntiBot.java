@@ -14,12 +14,11 @@ import keystrokesmod.module.setting.impl.SliderSetting;
 import keystrokesmod.script.classes.Vec3;
 import keystrokesmod.utility.Utils;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.play.client.C02PacketUseEntity;
+import net.minecraft.network.play.client.CPacketUseEntity;
 import keystrokesmod.event.world.EntityJoinWorldEvent;
 import keystrokesmod.eventbus.annotations.EventListener;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +58,7 @@ public class AntiBot extends Module {
         this.registerSetting(whitelistChicken = new ButtonSetting("Whitelist chickens", false));
     }
 
-    public static boolean isBot(Entity entity) {
+    public static boolean isBot(Object entity) {
         if (!ModuleManager.antiBot.isEnabled()) {
             return false;
         }

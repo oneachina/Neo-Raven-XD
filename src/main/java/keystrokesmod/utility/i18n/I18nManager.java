@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class I18nManager {
-    public static final String[] LANGUAGE_LIST = new String[]{"ç®€ä½“ä¸­æ–‡", "Deutsch", "UwU", "French", "EspaÃ±ol"};
+    public static final String[] LANGUAGE_LIST = new String[]{"¼òÌåÖÐÎÄ", "Deutsch", "UwU", "French", "Espa?ol"};
 
     private static boolean loaded = false;
     public static final List<Map<Module, I18nModule>> MODULE_MAP = new ArrayList<>(LANGUAGE_LIST.length);

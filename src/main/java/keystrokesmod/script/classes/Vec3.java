@@ -1,11 +1,11 @@
 package keystrokesmod.script.classes;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.MathHelper;
 
 public class Vec3 {
     public static final Vec3 ZERO = new Vec3(0, 0, 0);
@@ -18,7 +18,7 @@ public class Vec3 {
         this.z = z;
     }
 
-    public Vec3(net.minecraft.util.@NotNull Vec3 vec3) {
+    public Vec3(keystrokesmod.minecraft.Vec3 vec3) {
         this(vec3.xCoord, vec3.yCoord, vec3.zCoord);
     }
 
@@ -52,21 +52,21 @@ public class Vec3 {
         double deltaX = this.x - vec3.x;
         double deltaY = this.y - vec3.y;
         double deltaZ = this.z - vec3.z;
-        return MathHelper.sqrt_double(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+        return MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     }
 
-    public double distanceTo(@NotNull net.minecraft.util.Vec3 vec3) {
+    public double distanceTo(@NotNull keystrokesmod.minecraft.Vec3 vec3) {
         double deltaX = this.x - vec3.xCoord;
         double deltaY = this.y - vec3.yCoord;
         double deltaZ = this.z - vec3.zCoord;
-        return MathHelper.sqrt_double(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+        return MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     }
 
     public double distanceTo(@NotNull Entity entity) {
         double deltaX = this.x - entity.posX;
         double deltaY = this.y - entity.posY;
         double deltaZ = this.z - entity.posZ;
-        return MathHelper.sqrt_double(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+        return MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     }
 
     public double distanceToSq(@NotNull Vec3 vec3) {
@@ -102,8 +102,8 @@ public class Vec3 {
     }
 
     @Contract("-> new")
-    public net.minecraft.util.Vec3 toVec3() {
-        return new net.minecraft.util.Vec3(x, y, z);
+    public keystrokesmod.minecraft.Vec3 toVec3() {
+        return new keystrokesmod.minecraft.Vec3(x, y, z);
     }
 
     @Override

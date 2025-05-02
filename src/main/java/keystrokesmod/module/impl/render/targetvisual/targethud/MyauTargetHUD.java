@@ -61,22 +61,22 @@ public class MyauTargetHUD extends SubMode<TargetHUD> implements ITargetVisual {
     public void render(@NotNull EntityLivingBase target) {
         String TargetName = target.getDisplayName().getFormattedText();
         float health = Utils.limit(target.getHealth() / target.getMaxHealth(), 0, 1);
-        String TargetHealth = String.format("%.1f", target.getHealth()) + "§c❤ ";
+        String TargetHealth = String.format("%.1f", target.getHealth()) + "§cIove ";
 
-        if (showStatus.isToggled() && mc.thePlayer != null) {
-            String status = (health <= Utils.getCompleteHealth(mc.thePlayer) / mc.thePlayer.getMaxHealth()) ? " §aW" : " §cL";
+        if (showStatus.isToggled() && mc.player != null) {
+            String status = (health <= Utils.getCompleteHealth(mc.player) / mc.player.getMaxHealth()) ? " §aW" : " §cL";
             TargetName = TargetName + status;
         }
 
         final ScaledResolution scaledResolution = new ScaledResolution(mc);
         final int n2 = 8;
-        final int n3 = mc.fontRendererObj.getStringWidth(TargetName) + n2 + 20;
+        final int n3 = mc.fontRenderer.getStringWidth(TargetName) + n2 + 20;
         final int n4 = scaledResolution.getScaledWidth() / 2 - n3 / 2 + posX;
         final int n5 = scaledResolution.getScaledHeight() / 2 + 15 + posY;
         minX = n4 - n2;
         minY = n5 - n2;
         maxX = n4 + n3;
-        maxY = n5 + (mc.fontRendererObj.FONT_HEIGHT + 5) - 6 + n2;
+        maxY = n5 + (mc.fontRenderer.FONT_HEIGHT + 5) - 6 + n2;
 
         final int n10 = 255;
         final int n11 = Math.min(n10, 110);

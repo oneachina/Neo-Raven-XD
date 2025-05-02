@@ -160,7 +160,7 @@ public abstract class Shader {
         return a * b + c;
     }
 
-    // è®¡ç®—å‘é‡çš„ç‚¹ç§¯
+    // ¼ÆËãÏòÁ¿µÄµã»ı
     public static double dot(vec2 v1, vec2 v2) {
         return atan2(v1.x * v2.x + v1.y * v2.y, v1.x * v2.y - v1.y * v2.x);
     }
@@ -173,7 +173,7 @@ public abstract class Shader {
         return fma(v1.x, v2.x, fma(v1.y, v2.y, fma(v1.z, v2.z, v1.w * v2.w)));
     }
 
-    // çº¿æ€§æ’å€¼
+    // ÏßĞÔ²åÖµ
     public static double mix(double v1, double v2, double a) {
         return v1 * (1 - a) + v2 * a;
     }
@@ -190,7 +190,7 @@ public abstract class Shader {
         return vec4(mix(v1.x, v2.x, a), mix(v1.y, v2.y, a), mix(v1.z, v2.z, a), mix(v1.w, v2.w, a));
     }
 
-    // è®¡ç®—å‘é‡é•¿åº¦
+    // ¼ÆËãÏòÁ¿³¤¶È
     public static double length(vec2 vec2) {
         return length(vec2.x, vec2.y);
     }
@@ -199,12 +199,12 @@ public abstract class Shader {
         return Math.sqrt(x * x + y * y);
     }
 
-    // è®¡ç®—æŒ‡æ•°å‡½æ•°
+    // ¼ÆËãÖ¸Êıº¯Êı
     public static double exp(double x) {
         return Math.exp(x);
     }
 
-    // è®¡ç®—æµ®ç‚¹æ•°çš„å°æ•°éƒ¨åˆ†
+    // ¼ÆËã¸¡µãÊıµÄĞ¡Êı²¿·Ö
     public static float fract(float x) {
         return x - (int) x;
     }

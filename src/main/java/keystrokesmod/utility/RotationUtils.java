@@ -2,12 +2,18 @@ package keystrokesmod.utility;
 
 import com.google.common.base.Predicates;
 import keystrokesmod.event.player.PreMotionEvent;
+import keystrokesmod.minecraft.MovingObjectPosition;
+import keystrokesmod.minecraft.Vec3;
 import keystrokesmod.module.impl.other.RotationHandler;
 import keystrokesmod.module.impl.other.anticheats.utils.world.PlayerRotation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -22,9 +28,9 @@ public class RotationUtils {
     public static float prevRenderYaw;
 
     public static void setRenderYaw(float yaw) {
-        mc.thePlayer.rotationYawHead = yaw;
+        mc.player.rotationYawHead = yaw;
         if (RotationHandler.rotateBody.isToggled() && RotationHandler.fullBody.isToggled()) {
-            mc.thePlayer.renderYawOffset = yaw;
+            mc.player.renderYawOffset = yaw;
         }
     }
 
@@ -34,10 +40,10 @@ public class RotationUtils {
     }
 
     public static float[] getRotations(final BlockPos blockPos) {
-        final double n = blockPos.getX() + 0.45 - mc.thePlayer.posX;
-        final double n2 = blockPos.getY() + 0.45 - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
-        final double n3 = blockPos.getZ() + 0.45 - mc.thePlayer.posZ;
-        return new float[] { mc.thePlayer.rotationYaw + MathHelper.wrapAngleTo180_float((float)(Math.atan2(n3, n) * 57.295780181884766) - 90.0f - mc.thePlayer.rotationYaw), clampTo90(mc.thePlayer.rotationPitch + MathHelper.wrapAngleTo180_float((float)(-(Math.atan2(n2, MathHelper.sqrt_double(n * n + n3 * n3)) * 57.295780181884766)) - mc.thePlayer.rotationPitch)) };
+        final double n = blockPos.getX() + 0.45 - mc.player.posX;
+        final double n2 = blockPos.getY() + 0.45 - (mc.player.posY + mc.player.getEyeHeight());
+        final double n3 = blockPos.getZ() + 0.45 - mc.player.posZ;
+        return new float[] { mc.player.rotationYaw + MathHelper.wrapDegrees((float)(Math.atan2(n3, n) * 57.295780181884766) - 90.0f - mc.player.rotationYaw), clampTo90(mc.player.rotationPitch + MathHelper.wrapDegrees((float)(-(Math.atan2(n2, MathHelper.sqrt(n * n + n3 * n3)) * 57.295780181884766)) - mc.player.rotationPitch)) };
     }
 
     public static float interpolateValue(float tickDelta, float old, float newFloat) {
@@ -47,17 +53,17 @@ public class RotationUtils {
     public static float @NotNull [] getRotations(Entity entity, final float n, final float n2) {
         final float[] array = getRotations(entity);
         if (array == null) {
-            return new float[] { mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch };
+            return new float[] { mc.player.rotationYaw, mc.player.rotationPitch };
         }
         return fixRotation(array[0], array[1], n, n2);
     }
 
     public static double distanceFromYaw(final Entity entity, final boolean b) {
-        return Math.abs(MathHelper.wrapAngleTo180_double(i(entity.posX, entity.posZ) - ((b && PreMotionEvent.setRenderYaw()) ? RotationUtils.renderYaw : mc.thePlayer.rotationYaw)));
+        return Math.abs(MathHelper.wrapDegrees(i(entity.posX, entity.posZ) - ((b && PreMotionEvent.setRenderYaw()) ? RotationUtils.renderYaw : mc.player.rotationYaw)));
     }
 
     public static float i(final double n, final double n2) {
-        return (float)(Math.atan2(n - mc.thePlayer.posX, n2 - mc.thePlayer.posZ) * 57.295780181884766 * -1.0);
+        return (float)(Math.atan2(n - mc.player.posX, n2 - mc.player.posZ) * 57.295780181884766 * -1.0);
     }
 
     public static boolean notInRange(final BlockPos blockPos, final double n) {
@@ -74,16 +80,16 @@ public class RotationUtils {
         if (entity == null) {
             return null;
         }
-        final double n = entity.posX - mc.thePlayer.posX;
-        final double n2 = entity.posZ - mc.thePlayer.posZ;
+        final double n = entity.posX - mc.player.posX;
+        final double n2 = entity.posZ - mc.player.posZ;
         double n3;
         if (entity instanceof EntityLivingBase) {
             final EntityLivingBase entityLivingBase = (EntityLivingBase) entity;
-            n3 = entityLivingBase.posY + entityLivingBase.getEyeHeight() * 0.9 - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
+            n3 = entityLivingBase.posY + entityLivingBase.getEyeHeight() * 0.9 - (mc.player.posY + mc.player.getEyeHeight());
         } else {
-            n3 = (entity.getEntityBoundingBox().minY + entity.getEntityBoundingBox().maxY) / 2.0 - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
+            n3 = (entity.getEntityBoundingBox().minY + entity.getEntityBoundingBox().maxY) / 2.0 - (mc.player.posY + mc.player.getEyeHeight());
         }
-        return new float[]{mc.thePlayer.rotationYaw + MathHelper.wrapAngleTo180_float((float) (Math.atan2(n2, n) * 57.295780181884766) - 90.0f - mc.thePlayer.rotationYaw), clampTo90(mc.thePlayer.rotationPitch + MathHelper.wrapAngleTo180_float((float) (-(Math.atan2(n3, MathHelper.sqrt_double(n * n + n2 * n2)) * 57.295780181884766)) - mc.thePlayer.rotationPitch) + 3.0f)};
+        return new float[]{mc.player.rotationYaw + MathHelper.wrapDegrees((float) (Math.atan2(n2, n) * 57.295780181884766) - 90.0f - mc.player.rotationYaw), clampTo90(mc.player.rotationPitch + MathHelper.wrapDegrees((float) (-(Math.atan2(n3, MathHelper.sqrt(n * n + n2 * n2)) * 57.295780181884766)) - mc.player.rotationPitch) + 3.0f)};
     }
 
     public static float[] getRotationsPredicated(final Entity entity, final int ticks) {
@@ -102,20 +108,20 @@ public class RotationUtils {
             posX += n2;
             posZ += n3;
         }
-        final double n4 = posX - mc.thePlayer.posX;
+        final double n4 = posX - mc.player.posX;
         double n5;
         if (entity instanceof EntityLivingBase) {
-            n5 = posY + entity.getEyeHeight() * 0.9 - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
+            n5 = posY + entity.getEyeHeight() * 0.9 - (mc.player.posY + mc.player.getEyeHeight());
         }
         else {
-            n5 = (entity.getEntityBoundingBox().minY + entity.getEntityBoundingBox().maxY) / 2.0 - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
+            n5 = (entity.getEntityBoundingBox().minY + entity.getEntityBoundingBox().maxY) / 2.0 - (mc.player.posY + mc.player.getEyeHeight());
         }
-        final double n6 = posZ - mc.thePlayer.posZ;
-        return new float[] { mc.thePlayer.rotationYaw + MathHelper.wrapAngleTo180_float((float)(Math.atan2(n6, n4) * 57.295780181884766) - 90.0f - mc.thePlayer.rotationYaw), clampTo90(mc.thePlayer.rotationPitch + MathHelper.wrapAngleTo180_float((float)(-(Math.atan2(n5, MathHelper.sqrt_double(n4 * n4 + n6 * n6)) * 57.295780181884766)) - mc.thePlayer.rotationPitch) + 3.0f) };
+        final double n6 = posZ - mc.player.posZ;
+        return new float[] { mc.player.rotationYaw + MathHelper.wrapDegrees((float)(Math.atan2(n6, n4) * 57.295780181884766) - 90.0f - mc.player.rotationYaw), clampTo90(mc.player.rotationPitch + MathHelper.wrapDegrees((float)(-(Math.atan2(n5, MathHelper.sqrt(n4 * n4 + n6 * n6)) * 57.295780181884766)) - mc.player.rotationPitch) + 3.0f) };
     }
 
     public static float clampTo90(final float n) {
-        return MathHelper.clamp_float(n, -90.0f, 90.0f);
+        return MathHelper.clamp(n, -90.0f, 90.0f);
     }
 
     public static float[] fixRotation(float n, float n2, final float n3, final float n4) {
@@ -141,26 +147,26 @@ public class RotationUtils {
     }
 
     public static float angle(final double n, final double n2) {
-        return (float) (Math.atan2(n - mc.thePlayer.posX, n2 - mc.thePlayer.posZ) * 57.295780181884766 * -1.0);
+        return (float) (Math.atan2(n - mc.player.posX, n2 - mc.player.posZ) * 57.295780181884766 * -1.0);
     }
 
-    public static MovingObjectPosition rayCast(final Vec3 from, final double distance, final float yaw, final float pitch) {
+    public static RayTraceResult rayCast(final Vec3 from, final double distance, final float yaw, final float pitch) {
         final float n4 = -yaw * 0.017453292f;
         final float n5 = -pitch * 0.017453292f;
         final float cos = MathHelper.cos(n4 - 3.1415927f);
         final float sin = MathHelper.sin(n4 - 3.1415927f);
         final float n6 = -MathHelper.cos(n5);
         final Vec3 vec3 = new Vec3(sin * n6, MathHelper.sin(n5), cos * n6);
-        return mc.theWorld.rayTraceBlocks(from, from.addVector(vec3.xCoord * distance, vec3.yCoord * distance, vec3.zCoord * distance), false, false, false);
+        return mc.world.rayTraceBlocks(from, from.addVector(vec3.xCoord * distance, vec3.yCoord * distance, vec3.zCoord * distance), false, false, false);
     }
 
-    public static MovingObjectPosition rayCast(final double distance, final float yaw, final float pitch) {
-        final Vec3 getPositionEyes = mc.thePlayer.getPositionEyes(1.0f);
+    public static RayTraceResult rayCast(final double distance, final float yaw, final float pitch) {
+        final Vec3 getPositionEyes = mc.player.getPositionEyes(1.0f);
         return rayCast(getPositionEyes, distance, yaw, pitch);
     }
 
     public static MovingObjectPosition rayTraceCustom(double blockReachDistance, float yaw, float pitch) {
-        final Vec3 vec3 = mc.thePlayer.getPositionEyes(1.0F);
+        final Vec3 vec3 = mc.player.getPositionEyes(1.0F);
         final Vec3 vec31 = getVectorForRotation(pitch, yaw);
         final Vec3 vec32 = vec3.addVector(vec31.xCoord * blockReachDistance, vec31.yCoord * blockReachDistance, vec31.zCoord * blockReachDistance);
         return mc.theWorld.rayTraceBlocks(vec3, vec32, false, false, true);
@@ -210,7 +216,7 @@ public class RotationUtils {
     }
 
     @Contract("_, _ -> new")
-    public static @NotNull keystrokesmod.script.classes.Vec3 getNearestPoint(@NotNull AxisAlignedBB from, @NotNull keystrokesmod.script.classes.Vec3 to) {
+    public static Vec3 getNearestPoint(AxisAlignedBB from, @NotNull keystrokesmod.script.classes.Vec3 to) {
         double pointX, pointY, pointZ;
         if (to.x() >= from.maxX) {
             pointX = from.maxX;
@@ -239,7 +245,7 @@ public class RotationUtils {
         } else if (hitPos.z() == box.maxZ) {
             return EnumFacing.SOUTH;
         }
-        return mc.thePlayer.getHorizontalFacing();
+        return mc.player.getHorizontalFacing();
     }
 
     @Contract("_, _ -> new")
@@ -281,7 +287,7 @@ public class RotationUtils {
     @Contract("_, _, _ -> new")
     public static @NotNull MovingObjectPosition rayCastStrict(final float yaw, final float pitch, final double range) {
         final float partialTicks = Utils.getTimer().renderPartialTicks;
-        final Entity entity = mc.thePlayer;
+        final Entity entity = mc.player;
         MovingObjectPosition objectMouseOver;
 
         if (entity != null && mc.theWorld != null) {

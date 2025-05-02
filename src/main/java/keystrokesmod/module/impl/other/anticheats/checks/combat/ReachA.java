@@ -19,7 +19,7 @@ public class ReachA extends Check {
 
     @Override
     public void _onTick() {
-        if (player.currentSwing && !player.lastSwing) {  // ç¬¬1ä¸ªæŒ¥æ‰‹tick
+        if (player.currentSwing && !player.lastSwing) {  // µÚ1¸ö»ÓÊÖtick
             onSwing();
         }
     }
@@ -35,7 +35,7 @@ public class ReachA extends Check {
                         .min((e1, e2) -> (int) ((new Vec3(e1).distanceTo(player.fabricPlayer) - new Vec3(e2).distanceTo(player.fabricPlayer)) * 100))
                         .orElseThrow(NoSuchElementException::new);
                 double distance = new Vec3(possibleTarget).distanceTo(player.fabricPlayer);
-                if (distance < 6 && distance > AdvancedConfig.reachADefaultReach) {  // æ»¡è¶³æ ‡è®°æ¡ä»¶
+                if (distance < 6 && distance > AdvancedConfig.reachADefaultReach) {  // Âú×ã±ê¼ÇÌõ¼ş
                     flag(String.format("target: %s  distance: %.2f", possibleTarget.getName(), distance));
                 }
             } catch (NoSuchElementException ignored) {

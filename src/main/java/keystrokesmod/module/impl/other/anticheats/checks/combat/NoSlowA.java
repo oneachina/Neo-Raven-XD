@@ -13,7 +13,7 @@ import java.util.List;
 public class NoSlowA extends Check {
     public static final List<Double> SLOW_SPEED = new ArrayList<>();
     public short itemUseTick = 0;
-    public short disableTick = 0;  // è·³è·ƒå¼±æ£€æµ‹
+    public short disableTick = 0;  // ÌøÔ¾Èõ¼ì²â
 
     public NoSlowA(@NotNull TRPlayer player) {
         super("NoSlowA", player);
@@ -31,7 +31,7 @@ public class NoSlowA extends Check {
     public void _onTick() {
         if (!player.fabricPlayer.isUsingItem() || !player.lastUsingItem) {
             itemUseTick = 0;
-            return;  // å½“è¿ç»­ä¸¤ä¸ªtickä½¿ç”¨ç‰©å“æ‰æ£€æŸ¥
+            return;  // µ±Á¬ĞøÁ½¸ötickÊ¹ÓÃÎïÆ·²Å¼ì²é
         }
         if (player.jumping) {
             disableTick = AdvancedConfig.getNoSlowAInJumpDisableTick();

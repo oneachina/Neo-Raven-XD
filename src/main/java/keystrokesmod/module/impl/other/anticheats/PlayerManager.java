@@ -17,9 +17,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class PlayerManager {
-    public Map<UUID, Boolean> activeMap;  // å®æ—¶æ´»åŠ¨ç©å®¶(å¯è¢«æ£€æŸ¥)åˆ—è¡¨
+    public Map<UUID, Boolean> activeMap;  // ÊµÊ±»î¶¯Íæ¼Ò(¿É±»¼ì²é)ÁĞ±í
 
-    public Map<UUID, TRPlayer> dataMap;  // ç©å®¶æ•°æ®åˆ—è¡¨
+    public Map<UUID, TRPlayer> dataMap;  // Íæ¼ÒÊı¾İÁĞ±í
 
     public PlayerManager() {
         activeMap = new Object2ObjectOpenHashMap<>();
@@ -30,7 +30,7 @@ public class PlayerManager {
         if (client.theWorld == null || client.thePlayer == null) return;
         activeMap.forEach((uuid, aBoolean) -> activeMap.replace(uuid, false));
 
-        // éå†æ´»åŠ¨ç©å®¶
+        // ±éÀú»î¶¯Íæ¼Ò
         try {
             for (AbstractClientPlayer player : LevelUtils.getPlayers()) {
                 final UUID uuid = player.getUniqueID();
@@ -53,7 +53,7 @@ public class PlayerManager {
                     dataMap.put(uuid, trPlayer);
                 }
 
-                // æ›´æ–°
+                // ¸üĞÂ
                 activeMap.replace(uuid, true);
                 try {
                     final TRPlayer trPlayer = dataMap.get(uuid);
@@ -63,7 +63,7 @@ public class PlayerManager {
                     trPlayer.update(player);
                 } catch (Exception e) {
                     LogUtils.custom(Arrays.toString(e.getStackTrace()));
-                    LogUtils.LOGGER.error("é‡åˆ°äº†å¼‚å¸¸ï¼Œä¸¢å¼ƒç©å®¶ {} æ•°æ®ã€‚{}", player, e.getLocalizedMessage());
+                    LogUtils.LOGGER.error("Óöµ½ÁËÒì³££¬¶ªÆúÍæ¼Ò {} Êı¾İ¡£{}", player, e.getLocalizedMessage());
                     activeMap.remove(uuid);
                 }
             }

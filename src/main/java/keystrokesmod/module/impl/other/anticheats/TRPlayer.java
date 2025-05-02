@@ -6,6 +6,7 @@ import keystrokesmod.script.classes.ItemStack;
 import keystrokesmod.script.classes.Vec3;
 import keystrokesmod.utility.PlayerData;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.world.GameType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
@@ -15,10 +16,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import static net.minecraft.world.WorldSettings.GameType;
-
 /**
- * ç®¡ç†ç©å®¶ä¿¡æ¯çš„ç±»ã€‚æ¯ä¸ªæœ‰æ•ˆç©å®¶éƒ½åº”æœ‰ä¸€ä¸ªTRPlayerå®ä¾‹ã€‚
+ * ¹ÜÀíÍæ¼ÒĞÅÏ¢µÄÀà¡£Ã¿¸öÓĞĞ§Íæ¼Ò¶¼Ó¦ÓĞÒ»¸öTRPlayerÊµÀı¡£
  */
 public class TRPlayer {
     public AbstractClientPlayer fabricPlayer;
@@ -111,7 +110,7 @@ public class TRPlayer {
         currentPos = new Vec3(fabricPlayer.posX, fabricPlayer.posY, fabricPlayer.posZ);
         currentMotion = new Vec3(fabricPlayer.motionX, fabricPlayer.motionY, fabricPlayer.motionZ);
         currentVehicleMotion = Vec3.ZERO;
-        currentMainHead = ItemStack.convert(fabricPlayer.getHeldItem());
+        currentMainHead = ItemStack.convert(fabricPlayer.getHeldItem(null));
         currentOffHead = currentMainHead;
         currentSprint = fabricPlayer.isSprinting();
         currentSwing = fabricPlayer.isSwingInProgress;
@@ -163,7 +162,7 @@ public class TRPlayer {
         lastRot = currentRot;
         lastOnGround2 = lastOnGround;
         lastOnGround = currentOnGround;
-        lastUsingItem = fabricPlayer.isUsingItem();
+        lastUsingItem = fabricPlayer.isInWater();
         lastGameType = currentGameType;
         lastFallDistance = fabricPlayer.fallDistance;
         upTime++;

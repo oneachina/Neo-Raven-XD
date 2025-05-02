@@ -18,10 +18,6 @@ import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.function.Consumer;
 
-/**
- * é«˜æ•ˆçš„åŒæ­¥äº‹ä»¶æ€»çº¿
- * ä¸æ”¯æŒç›‘å¬çˆ¶äº‹ä»¶
- */
 @Getter
 @SuppressWarnings("unused")
 public final class EventBus {
@@ -30,9 +26,9 @@ public final class EventBus {
     private final Set<EventHandler<?>> registeredHandlers = new ObjectOpenHashSet<>(10);
 
     /**
-     * å‘äº‹ä»¶æ€»çº¿æ³¨å†Œå¯¹è±¡çš„æ‰€æœ‰å¸¦æœ‰ {@link EventListener} æ³¨è§£çš„æ–¹æ³•
+     * ÏòÊÂ¼ş×ÜÏß×¢²á¶ÔÏóµÄËùÓĞ´øÓĞ {@link EventListener} ×¢½âµÄ·½·¨
      *
-     * @param object éœ€è¦æ³¨å†Œçš„å¯¹è±¡
+     * @param object ĞèÒª×¢²áµÄ¶ÔÏó
      */
     @SuppressWarnings("unchecked")
     public <T> void register(@NotNull T object) {
@@ -42,9 +38,9 @@ public final class EventBus {
     }
 
     /**
-     * å‘äº‹ä»¶æ€»çº¿æ³¨å†Œç±»çš„æ‰€æœ‰å¸¦æœ‰ {@link EventListener} æ³¨è§£çš„é™æ€æ–¹æ³•
+     * ÏòÊÂ¼ş×ÜÏß×¢²áÀàµÄËùÓĞ´øÓĞ {@link EventListener} ×¢½âµÄ¾²Ì¬·½·¨
      *
-     * @param objClass éœ€è¦æ³¨å†Œçš„ç±»
+     * @param objClass ĞèÒª×¢²áµÄÀà
      */
     public <T> void register(@NotNull Class<T> objClass) {
         doRegister(objClass, null);
@@ -103,20 +99,20 @@ public final class EventBus {
     }
 
     /**
-     * å‘äº‹ä»¶æ€»çº¿æ³¨å†Œrunnable
+     * ÏòÊÂ¼ş×ÜÏß×¢²árunnable
      *
-     * @param eventType äº‹ä»¶ç±»å‹
-     * @param runnable  éœ€è¦æ³¨å†Œçš„æ–¹æ³•
+     * @param eventType ÊÂ¼şÀàĞÍ
+     * @param runnable  ĞèÒª×¢²áµÄ·½·¨
      */
     public <T extends Event> void register(@NotNull Class<T> eventType, @NotNull Runnable runnable) {
         register(eventType, event -> runnable.run());
     }
 
     /**
-     * å‘äº‹ä»¶æ€»çº¿æ³¨å†Œconsumer
+     * ÏòÊÂ¼ş×ÜÏß×¢²áconsumer
      *
-     * @param eventType äº‹ä»¶ç±»å‹
-     * @param consumer éœ€è¦æ³¨å†Œçš„æ–¹æ³•
+     * @param eventType ÊÂ¼şÀàĞÍ
+     * @param consumer ĞèÒª×¢²áµÄ·½·¨
      */
     public <T extends Event> void register(@NotNull Class<T> eventType, @NotNull Consumer<@NotNull T> consumer) {
         addHandler(new EventHandler<>(null, null, eventType, consumer, 0));
@@ -151,8 +147,8 @@ public final class EventBus {
     }
 
     /**
-     * ä»äº‹ä»¶æ€»çº¿å–æ¶ˆæ³¨å†Œå¯¹è±¡çš„æ‰€æœ‰å¸¦æœ‰ {@link EventListener} æ³¨è§£çš„æ–¹æ³•
-     * @param object éœ€è¦å–æ¶ˆæ³¨å†Œçš„å¯¹è±¡
+     * ´ÓÊÂ¼ş×ÜÏßÈ¡Ïû×¢²á¶ÔÏóµÄËùÓĞ´øÓĞ {@link EventListener} ×¢½âµÄ·½·¨
+     * @param object ĞèÒªÈ¡Ïû×¢²áµÄ¶ÔÏó
      */
     public void unregister(@NotNull Object object) {
         synchronized (eventHandlers) {
@@ -164,9 +160,9 @@ public final class EventBus {
 
 
     /**
-     * ä»äº‹ä»¶æ€»çº¿å–æ¶ˆæ³¨å†Œrunnable
+     * ´ÓÊÂ¼ş×ÜÏßÈ¡Ïû×¢²árunnable
      *
-     * @param runnable éœ€è¦å–æ¶ˆæ³¨å†Œçš„æ–¹æ³•
+     * @param runnable ĞèÒªÈ¡Ïû×¢²áµÄ·½·¨
      */
     public void unregister(@NotNull Runnable runnable) {
         synchronized (eventHandlers) {
@@ -177,9 +173,9 @@ public final class EventBus {
     }
 
     /**
-     * ä»äº‹ä»¶æ€»çº¿å–æ¶ˆæ³¨å†Œconsumer
+     * ´ÓÊÂ¼ş×ÜÏßÈ¡Ïû×¢²áconsumer
      *
-     * @param consumer éœ€è¦å–æ¶ˆæ³¨å†Œçš„æ–¹æ³•
+     * @param consumer ĞèÒªÈ¡Ïû×¢²áµÄ·½·¨
      */
     public void unregister(@NotNull Consumer<? extends Event> consumer) {
         synchronized (eventHandlers) {

@@ -7,7 +7,6 @@ import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.setting.impl.ButtonSetting;
 import keystrokesmod.module.setting.impl.ModeSetting;
 import keystrokesmod.utility.BlockUtils;
-import keystrokesmod.utility.Reflection;
 import keystrokesmod.utility.Utils;
 import keystrokesmod.utility.render.Animation;
 import keystrokesmod.utility.render.Easing;
@@ -15,13 +14,11 @@ import keystrokesmod.utility.render.progress.Progress;
 import keystrokesmod.utility.render.progress.ProgressManager;
 import net.minecraft.block.BlockBed;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
 import keystrokesmod.event.render.Render2DEvent;
+import net.minecraft.util.math.BlockPos;
 
 public class BreakProgress extends Module {
     private final ModeSetting mode;
-    private final ButtonSetting manual;
     private final ButtonSetting bedAura;
     private final ButtonSetting progressBar;
     private final Animation progressAnimation = new Animation(Easing.EASE_OUT_CIRC, 200);
@@ -33,7 +30,7 @@ public class BreakProgress extends Module {
     public BreakProgress() {
         super("BreakProgress", category.render);
         this.registerSetting(mode = new ModeSetting("Mode", new String[]{"Percentage", "Second", "Decimal"}, 0));
-        this.registerSetting(manual = new ButtonSetting("Show manual", true));
+        this.registerSetting(new ButtonSetting("Show manual", true));
         this.registerSetting(bedAura = new ButtonSetting("Show BedAura", true));
         this.registerSetting(progressBar = new ButtonSetting("Progress bar", false, bedAura::isToggled));
     }
@@ -64,7 +61,7 @@ public class BreakProgress extends Module {
         GlStateManager.scale(-0.02266667f, -0.02266667f, -0.02266667f);
         GlStateManager.depthMask(false);
         GlStateManager.disableDepth();
-        mc.fontRendererObj.drawString(this.progressStr, (float) (-mc.fontRendererObj.getStringWidth(this.progressStr) / 2), -3.0f, -1, true);
+        mc.fontRenderer.drawString(this.progressStr, (float) (-mc.fontRenderer.getStringWidth(this.progressStr) / 2), -3.0f, -1, true);
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -78,7 +75,7 @@ public class BreakProgress extends Module {
                 break;
             }
             case 1: {
-                double timeLeft = Utils.rnd((1.0f - this.progress) / BlockUtils.getBlockHardness(BlockUtils.getBlock(this.block), mc.thePlayer.getHeldItem(), false, false) / 20.0, 1);
+                double timeLeft = Utils.rnd((1.0f - this.progress) / BlockUtils.getBlockHardness(BlockUtils.getBlock(this.block), mc.player.getHeldItem(null), false, false) / 20.0, 1);
                 this.progressStr = timeLeft == 0 ? "0" : timeLeft + "s";
                 break;
             }
@@ -90,7 +87,7 @@ public class BreakProgress extends Module {
     }
 
     public void onUpdate() {
-        if (mc.thePlayer.capabilities.isCreativeMode || !mc.thePlayer.capabilities.allowEdit) {
+        if (mc.player.capabilities.isCreativeMode || !mc.player.capabilities.allowEdit) {
             this.resetVariables();
             return;
         }
@@ -103,20 +100,8 @@ public class BreakProgress extends Module {
             this.setProgress();
             return;
         }
-        if (!manual.isToggled() || mc.objectMouseOver == null || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) {
-            this.resetVariables();
-            return;
-        }
-        try {
-            this.progress = Reflection.curBlockDamageMP.getFloat(mc.playerController);
-            if (this.progress == 0.0f) {
-                this.resetVariables();
-                return;
-            }
-            this.block = mc.objectMouseOver.getBlockPos();
-            this.setProgress();
-        } catch (IllegalAccessException ignored) {
-        }
+        this.resetVariables();
+        return;
     }
 
     public void onDisable() {

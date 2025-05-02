@@ -12,9 +12,10 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.IBlockAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,24 +31,24 @@ public class BlockUtils {
         return blockPos == blockPos2 || (blockPos.getX() == blockPos2.getX() && blockPos.getY() == blockPos2.getY() && blockPos.getZ() == blockPos2.getZ());
     }
 
-    public static boolean notFull(Block block) {
-        return block instanceof BlockFenceGate || block instanceof BlockLadder || block instanceof BlockFlowerPot || block instanceof BlockBasePressurePlate || isFluid(block) || block instanceof BlockFence || block instanceof BlockAnvil || block instanceof BlockEnchantmentTable || block instanceof BlockChest;
+    public static boolean notFull(Block block,BlockPos blockPos) {
+        return block instanceof BlockFenceGate || block instanceof BlockLadder || block instanceof BlockFlowerPot || block instanceof BlockBasePressurePlate || isFluid(block,blockPos) || block instanceof BlockFence || block instanceof BlockAnvil || block instanceof BlockEnchantmentTable || block instanceof BlockChest;
     }
 
-    public static boolean isFluid(Block block) {
-        return block.getMaterial() == Material.lava || block.getMaterial() == Material.water;
+    public static boolean isFluid(Block block,BlockPos blockPos) {
+        return block.getMaterial(getBlockState(blockPos)) == Material.LAVA || block.getMaterial(getBlockState(blockPos)) == Material.WATER;
     }
 
     public static boolean isInteractable(Block block) {
-        return block instanceof BlockFurnace || block instanceof BlockFenceGate || block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockEnchantmentTable || block instanceof BlockBrewingStand || block instanceof BlockBed || block instanceof BlockDropper || block instanceof BlockDispenser || block instanceof BlockHopper || block instanceof BlockAnvil || block == Blocks.crafting_table;
+        return block instanceof BlockFurnace || block instanceof BlockFenceGate || block instanceof BlockChest || block instanceof BlockEnderChest || block instanceof BlockEnchantmentTable || block instanceof BlockBrewingStand || block instanceof BlockBed || block instanceof BlockDropper || block instanceof BlockDispenser || block instanceof BlockHopper || block instanceof BlockAnvil || block == Blocks.CRAFTING_TABLE;
     }
 
-    public static float getBlockHardness(final Block block, final ItemStack itemStack, boolean ignoreSlow, boolean ignoreGround) {
-        final float getBlockHardness = block.getBlockHardness(mc.theWorld, null);
+    public static float getBlockHardness(final Block block, final ItemStack itemStack, boolean ignoreSlow, boolean ignoreGround,BlockPos blockPos) {
+        final float getBlockHardness = block.getBlockHardness(mc.world.getBlockState(blockPos), null, blockPos);
         if (getBlockHardness < 0.0f) {
             return 0.0f;
         }
-        return (block.getMaterial().isToolNotRequired() || (itemStack != null && itemStack.canHarvestBlock(block))) ? (getToolDigEfficiency(itemStack, block, ignoreSlow, ignoreGround) / getBlockHardness / 30.0f) : (getToolDigEfficiency(itemStack, block, ignoreSlow, ignoreGround) / getBlockHardness / 100.0f);
+        return (block.getMaterial(getBlockState(blockPos)).isToolNotRequired() || (itemStack != null && itemStack.canHarvestBlock(getBlockState(blockPos))) ? (getToolDigEfficiency(itemStack, block, ignoreSlow, ignoreGround) / getBlockHardness / 30.0f) : (getToolDigEfficiency(itemStack, block, ignoreSlow, ignoreGround) / getBlockHardness / 100.0f));
     }
 
     public static float getToolDigEfficiency(ItemStack itemStack, Block block, boolean ignoreSlow, boolean ignoreGround) {
@@ -58,13 +59,13 @@ public class BlockUtils {
                 n += getEnchantmentLevel * getEnchantmentLevel + 1;
             }
         }
-        if (mc.thePlayer.isPotionActive(Potion.digSpeed)) {
-            n *= 1.0f + (mc.thePlayer.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1) * 0.2f;
+        if (mc.player.isPotionActive(Potion.digSpeed)) {
+            n *= 1.0f + (mc.player.getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1) * 0.2f;
         }
         if (!ignoreSlow) {
-            if (mc.thePlayer.isPotionActive(Potion.digSlowdown)) {
+            if (mc.player.isPotionActive(Potion.digSlowdown)) {
                 float n2;
-                switch (mc.thePlayer.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
+                switch (mc.player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) {
                     case 0: {
                         n2 = 0.3f;
                         break;
@@ -84,10 +85,10 @@ public class BlockUtils {
                 }
                 n *= n2;
             }
-            if (mc.thePlayer.isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(mc.thePlayer)) {
+            if (mc.player.isInsideOfMaterial(Material.WATER) && !EnchantmentHelper.getAquaAffinityModifier(mc.player)) {
                 n /= 5.0f;
             }
-            if (!mc.thePlayer.onGround && !ignoreGround) {
+            if (!mc.player.onGround && !ignoreGround) {
                 n /= 5.0f;
             }
         }
@@ -103,14 +104,14 @@ public class BlockUtils {
     }
 
     public static IBlockState getBlockState(BlockPos blockPos) {
-        return mc.theWorld.getBlockState(blockPos);
+        return mc.world.getBlockState(blockPos);
     }
 
     public static boolean isBlockUnderNoCollisions() {
-        for (int offset = 0; offset < mc.thePlayer.posY + mc.thePlayer.getEyeHeight(); offset += 2) {
-            BlockPos blockPos = new BlockPos(mc.thePlayer.posX, offset, mc.thePlayer.posZ);
+        for (int offset = 0; offset < mc.player.posY + mc.player.getEyeHeight(); offset += 2) {
+            BlockPos blockPos = new BlockPos(mc.player.posX, offset, mc.player.posZ);
 
-            if (mc.theWorld.getBlockState(blockPos).getBlock() != Blocks.air) {
+            if (mc.world.getBlockState(blockPos).getBlock() != Blocks.AIR) {
                 return true;
             }
         }
@@ -129,12 +130,12 @@ public class BlockUtils {
     }
 
     public static boolean isBlockUnder() {
-        if (mc.thePlayer.posY < 0.0) {
+        if (mc.player.posY < 0.0) {
             return false;
         } else {
-            for(int offset = 0; offset < (int)mc.thePlayer.posY + 2; offset += 2) {
-                AxisAlignedBB bb = mc.thePlayer.getEntityBoundingBox().offset(0.0, (double)(-offset), 0.0);
-                if (!mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, bb).isEmpty()) {
+            for(int offset = 0; offset < (int)mc.player.posY + 2; offset += 2) {
+                AxisAlignedBB bb = mc.player.getEntityBoundingBox().offset(0.0, (double)(-offset), 0.0);
+                if (!mc.theWorld.getCollidingBoundingBoxes(mc.player, bb).isEmpty()) {
                     return true;
                 }
             }
@@ -144,8 +145,8 @@ public class BlockUtils {
     }
 
     public static boolean isBlockUnder(int distance) {
-        for(int y = (int)mc.thePlayer.posY; y >= (int)mc.thePlayer.posY - distance; --y) {
-            if (!(mc.theWorld.getBlockState(new BlockPos(mc.thePlayer.posX, y, mc.thePlayer.posZ)).getBlock() instanceof BlockAir)) {
+        for(int y = (int)mc.player.posY; y >= (int)mc.player.posY - distance; --y) {
+            if (!(mc.theWorld.getBlockState(new BlockPos(mc.player.posX, y, mc.player.posZ)).getBlock() instanceof BlockAir)) {
                 return true;
             }
         }
@@ -164,8 +165,8 @@ public class BlockUtils {
         int b1 = to.getY();
         int a2 = from.getX();
         int b2 = to.getX();
-        BlockPos max = new BlockPos((a2 >= b2) ? a2 : b2,
-                (a1 >= b1) ? a1 : b1, (a >= b) ? a : b);
+        BlockPos max = new BlockPos(Math.max(a2, b2),
+                Math.max(a1, b1), Math.max(a, b));
 
         for (int x = min.getX(); x <= max.getX(); x++)
             for (int y = min.getY(); y <= max.getY(); y++)
@@ -186,7 +187,7 @@ public class BlockUtils {
             AxisAlignedBB box = getCollisionBoundingBox(blockPos);
             if (box == null) continue;
 
-            if (RotationUtils.getNearestPoint(box, from).distanceTo(from) <= distance)
+            if (RotationUtils.getNearestPoint(box, from).distanceTo(from.toVec3()) <= distance)
                 blocks.add(blockPos);
         }
 
@@ -236,21 +237,28 @@ public class BlockUtils {
     }
 
     public static boolean insideBlock() {
-        if (mc.thePlayer.ticksExisted < 5) {
+        if (mc.player.ticksExisted < 5) {
             return false;
         }
 
-        return insideBlock(mc.thePlayer.getEntityBoundingBox());
+        return insideBlock(mc.player.getEntityBoundingBox());
     }
 
-    public static boolean insideBlock(@NotNull final AxisAlignedBB bb) {
+    private static boolean insideBlock(AxisAlignedBB entityBoundingBox) {
+        return entityBoundingBox.intersects(mc.player.getEntityBoundingBox());
+    }
+
+    public static boolean insideBlock(@NotNull final AxisAlignedBB bb,final @NotNull Vec3 pos) {
         final WorldClient world = mc.theWorld;
-        for (int x = MathHelper.floor_double(bb.minX); x < MathHelper.floor_double(bb.maxX) + 1; ++x) {
-            for (int y = MathHelper.floor_double(bb.minY); y < MathHelper.floor_double(bb.maxY) + 1; ++y) {
-                for (int z = MathHelper.floor_double(bb.minZ); z < MathHelper.floor_double(bb.maxZ) + 1; ++z) {
+        for (int x = MathHelper.floor(bb.minX); x < MathHelper.floor(bb.maxX) + 1; ++x) {
+            for (int y = MathHelper.floor(bb.minY); y < MathHelper.floor(bb.maxY) + 1; ++y) {
+                for (int z = MathHelper.floor(bb.minZ); z < MathHelper.floor(bb.maxZ) + 1; ++z) {
                     final Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
                     final AxisAlignedBB boundingBox;
-                    if (block != null && !(block instanceof BlockAir) && (boundingBox = block.getCollisionBoundingBox(world, new BlockPos(x, y, z), world.getBlockState(new BlockPos(x, y, z)))) != null && bb.intersectsWith(boundingBox)) {
+                    BlockPos blockPos = new BlockPos(pos.x, pos.y, pos.z);
+                    IBlockState blockState = getBlockState(blockPos);
+                    IBlockAccess blockAccess = mc.world;
+                    if (!(block instanceof BlockAir) && (boundingBox = block.getCollisionBoundingBox(blockState, blockAccess, blockPos)) != null && bb.intersects(boundingBox)) {
                         return true;
                     }
                 }
@@ -262,11 +270,12 @@ public class BlockUtils {
     public static boolean insideBlock(final @NotNull Vec3 pos) {
         BlockPos blockPos = new BlockPos(pos.x, pos.y, pos.z);
         IBlockState blockState = getBlockState(blockPos);
+        IBlockAccess blockAccess = mc.world;
         Block block = blockState.getBlock();
-        return block.getCollisionBoundingBox(mc.theWorld, blockPos, blockState).isVecInside(pos.toVec3());
+        return block.getCollisionBoundingBox(blockState, blockAccess, blockPos).isVecInside(pos.toVec3());
     }
 
     public static Block blockRelativeToPlayer(final double offsetX, final double offsetY, final double offsetZ) {
-        return mc.theWorld.getBlockState(new BlockPos(mc.thePlayer).add(offsetX, offsetY, offsetZ)).getBlock();
+        return mc.world.getBlockState(new BlockPos(mc.player).add(offsetX, offsetY, offsetZ)).getBlock();
     }
 }

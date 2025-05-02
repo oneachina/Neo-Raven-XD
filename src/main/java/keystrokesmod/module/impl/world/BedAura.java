@@ -28,20 +28,14 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.C07PacketPlayerDigging;
-import net.minecraft.network.play.client.C09PacketHeldItemChange;
-import net.minecraft.network.play.client.C0APacketAnimation;
-import net.minecraft.network.play.server.S12PacketEntityVelocity;
-import net.minecraft.network.play.server.S27PacketExplosion;
-import net.minecraft.util.BlockPos;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.network.play.server.SPacketExplosion;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BedAura extends Module {
@@ -122,7 +116,7 @@ public class BedAura extends Module {
         }
 
         if (currentBlock != null) {
-            if (new Vec3(mc.thePlayer).distanceTo(Vec3.convert(currentBlock)) > Math.max(6, range.getInput())) {
+            if (new Vec3(mc.player).distanceTo(Vec3.convert(currentBlock)) > Math.max(6, range.getInput())) {
                 currentBlock = null;
                 reset(true);
                 return;
@@ -132,7 +126,7 @@ public class BedAura extends Module {
             reset(true);
             return;
         }
-        if (!mc.thePlayer.capabilities.allowEdit || mc.thePlayer.isSpectator()) {
+        if (!mc.player.capabilities.allowEdit || mc.player.isSpectator()) {
             reset(true);
             return;
         }
@@ -155,12 +149,12 @@ public class BedAura extends Module {
         if (delayStart) {
             int breakTickDelay = 0;
             if (ticksAfterBreak++ <= breakTickDelay) {
-                if (currentSlot != -1 && currentSlot != mc.thePlayer.inventory.currentItem) {
+                if (currentSlot != -1 && currentSlot != mc.player.inventory.currentItem) {
                     stopAutoblock = true;
                 }
                 return;
             } else {
-                if (currentSlot != -1 && currentSlot != mc.thePlayer.inventory.currentItem) {
+                if (currentSlot != -1 && currentSlot != mc.player.inventory.currentItem) {
                     stopAutoblock = true;
                 }
                 resetSlot();
@@ -189,11 +183,11 @@ public class BedAura extends Module {
         if (!Utils.nullCheck() || !cancelKnockback.isToggled() || currentBlock == null) {
             return;
         }
-        if (e.getPacket() instanceof S12PacketEntityVelocity) {
-            if (((S12PacketEntityVelocity) e.getPacket()).getEntityID() == mc.thePlayer.getEntityId()) {
+        if (e.getPacket() instanceof SPacketEntityVelocity) {
+            if (((SPacketEntityVelocity) e.getPacket()).getEntityID() == mc.thePlayer.getEntityId()) {
                 e.cancel();
             }
-        } else if (e.getPacket() instanceof S27PacketExplosion) {
+        } else if (e.getPacket() instanceof SPacketExplosion) {
             e.cancel();
         }
     }
@@ -256,13 +250,13 @@ public class BedAura extends Module {
 
     private BlockPos @Nullable [] getBedPos() {
         final int range = (int) Math.round(this.range.getInput());
-        final List<BlockPos> blocks = BlockUtils.getAllInBox(
-                mc.thePlayer.getPosition().add(-range, -range, -range),
-                mc.thePlayer.getPosition().add(range, range, range)
+        final List blocks = (List) BlockUtils.getAllInBox(
+                mc.player.getPosition().add(-range, -range, -range),
+                mc.player.getPosition().add(range, range, range)
         );
 
         for (BlockPos blockPos : blocks) {
-            final IBlockState getBlockState = mc.theWorld.getBlockState(blockPos);
+            final IBlockState getBlockState = mc.world.getBlockState(blockPos);
             if (getBlockState.getBlock() == Blocks.bed && getBlockState.getValue((IProperty<?>) BlockBed.PART) == BlockBed.EnumPartType.FOOT) {
                 float fov = (float) this.fov.getInput();
                 if (fov != 360 && !Utils.inFov(fov, blockPos)) {

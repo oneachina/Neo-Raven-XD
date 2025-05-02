@@ -43,6 +43,7 @@ import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.potion.Potion;
 import net.minecraft.scoreboard.*;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Contract;
@@ -81,12 +82,12 @@ public final class Utils {
     }
 
     public static String getServerName() {
-        return DuelsStats.nick.isEmpty() ? mc.thePlayer.getName() : DuelsStats.nick;
+        return DuelsStats.nick.isEmpty() ? mc.player.getName() : DuelsStats.nick;
     }
 
     public static boolean overVoid(double posX, double posY, double posZ) {
         for (int i = (int) posY; i > -1; i--) {
-            if (!(mc.theWorld.getBlockState(new BlockPos(posX, i, posZ)).getBlock() instanceof BlockAir)) {
+            if (!(mc.world.getBlockState(new BlockPos(posX, i, posZ)).getBlock() instanceof BlockAir)) {
                 return false;
             }
         }
@@ -94,13 +95,13 @@ public final class Utils {
     }
 
     public static boolean overVoid() {
-        return overVoid(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ);
+        return overVoid(mc.player.posX, mc.player.posY, mc.player.posZ);
     }
 
     public static List<NetworkPlayerInfo> getTablist() {
         return mc.getNetHandler().getPlayerInfoMap().stream()
                 .distinct()
-                .filter(info -> !info.getGameProfile().getId().equals(mc.thePlayer.getUniqueID()))
+                .filter(info -> !info.getGameProfile().getId().equals(mc.player.getUniqueID()))
                 .collect(Collectors.toList());
     }
 
@@ -198,7 +199,7 @@ public final class Utils {
     }
 
     public static @Range(from = -180, to = 180) double getFov(final double posX, final double posZ) {
-        return getFov(mc.thePlayer.rotationYaw, posX, posZ);
+        return getFov(mc.player.rotationYaw, posX, posZ);
     }
 
     public static @Range(from = -180, to = 180) double getFov(final float yaw, final double posX, final double posZ) {
@@ -210,7 +211,7 @@ public final class Utils {
     public static void sendMessage(String txt) {
         if (nullCheck()) {
             String m = formatColor(PREFIX + replace(txt));
-            mc.thePlayer.addChatMessage(new ChatComponentText(m));
+            mc.player.addChatMessage(new ChatComponentText(m));
         }
     }
 
@@ -254,29 +255,29 @@ public final class Utils {
 
     public static void sendDebugMessage(String message) {
         if (nullCheck()) {
-            mc.thePlayer.addChatMessage(new ChatComponentText("¬ß7[¬ßdR¬ß7]¬ßr " + message));
+            mc.player.addChatMessage(new ChatComponentText("°Ï7[°ÏdR°Ï7]°Ïr " + message));
         }
     }
 
     public static void attackEntity(Entity e, boolean clientSwing) {
         boolean attack = HitSelect.canAttack();
         if (clientSwing) {
-            if (attack || HitSelect.canSwing()) mc.thePlayer.swingItem();
+            if (attack || HitSelect.canSwing()) mc.player.swingItem();
         } else {
-            if (attack || HitSelect.canSwing()) mc.thePlayer.sendQueue.addToSendQueue(new C0APacketAnimation());
+            if (attack || HitSelect.canSwing()) mc.player.sendQueue.addToSendQueue(new C0APacketAnimation());
         }
         if (attack) {
-            mc.playerController.attackEntity(mc.thePlayer, e);
+            mc.playerController.attackEntity(mc.player, e);
         }
     }
 
     public static void attackEntityNoSwing(Entity e) {
-        if (HitSelect.canAttack()) mc.playerController.attackEntity(mc.thePlayer, e);
+        if (HitSelect.canAttack()) mc.playerController.attackEntity(mc.player, e);
     }
 
     public static void sendRawMessage(String txt) {
         if (nullCheck()) {
-            mc.thePlayer.addChatMessage(new ChatComponentText(formatColor(txt)));
+            mc.player.addChatMessage(new ChatComponentText(formatColor(txt)));
         }
     }
 
@@ -294,7 +295,7 @@ public final class Utils {
         float n = 1.0f;
         int n2 = -1;
         for (int i = 0; i < InventoryPlayer.getHotbarSize(); ++i) {
-            final ItemStack getStackInSlot = mc.thePlayer.inventory.getStackInSlot(i);
+            final ItemStack getStackInSlot = mc.player.inventory.getStackInSlot(i);
             if (getStackInSlot != null) {
                 final float a = getEfficiency(getStackInSlot, block);
                 if (a > n) {
@@ -311,7 +312,7 @@ public final class Utils {
         double highestPriority = 0.0;
 
         for (int i = 0; i < InventoryPlayer.getHotbarSize(); ++i) {
-            ItemStack item = mc.thePlayer.inventory.getStackInSlot(i);
+            ItemStack item = mc.player.inventory.getStackInSlot(i);
             if (item == null) continue;
 
             double priority = 0.0;
@@ -366,7 +367,7 @@ public final class Utils {
 
     public static String getColorForHealth(double n, double n2) {
         double health = rnd(n2, 1);
-        return ((n < 0.3) ? "¬ßc" : ((n < 0.5) ? "¬ß6" : ((n < 0.7) ? "¬ße" : "¬ßa"))) + (isWholeNumber(health) ? (int) health + "" : health);
+        return ((n < 0.3) ? "°Ïc" : ((n < 0.5) ? "°Ï6" : ((n < 0.7) ? "°Ïe" : "°Ïa"))) + (isWholeNumber(health) ? (int) health + "" : health);
     }
 
     public static int getColorForHealth(double health) {
@@ -374,7 +375,7 @@ public final class Utils {
     }
 
     public static String formatColor(String txt) {
-        return txt.replaceAll("&", "¬ß");
+        return txt.replaceAll("&", "°Ï");
     }
 
     public static void correctValue(@NotNull SliderSetting c, @NotNull SliderSetting d) {
@@ -405,7 +406,7 @@ public final class Utils {
     }
 
     public static boolean nullCheck() {
-        return mc.thePlayer != null && mc.theWorld != null;
+        return mc.player != null && mc.world != null;
     }
 
     private static final List<String> HYPIXEL_IPS = Collections.unmodifiableList(Arrays.asList("hypixel.net", "nyaproxy.xyz", "nyap.buzz", "hyp"));
@@ -433,7 +434,7 @@ public final class Utils {
 
     public static @NotNull String getHitsToKill(final EntityPlayer entityPlayer, final ItemStack itemStack) {
         final int n = (int) Math.ceil(ap(entityPlayer, itemStack));
-        return "¬ß" + ((n <= 1) ? "c" : ((n <= 3) ? "6" : ((n <= 5) ? "e" : "a"))) + n;
+        return "°Ï" + ((n <= 1) ? "c" : ((n <= 3) ? "6" : ((n <= 5) ? "e" : "a"))) + n;
     }
 
     public static double ap(final EntityPlayer entityPlayer, final ItemStack itemStack) {
@@ -459,7 +460,7 @@ public final class Utils {
     }
 
     public static float n() {
-        return ae(mc.thePlayer.rotationYaw, mc.thePlayer.movementInput.moveForward, mc.thePlayer.movementInput.moveStrafe);
+        return ae(mc.player.rotationYaw, mc.player.movementInput.moveForward, mc.player.movementInput.moveStrafe);
     }
 
     public static String extractFileName(String name) {
@@ -489,10 +490,10 @@ public final class Utils {
             if (!(entity instanceof EntityPlayer)) {
                 return false;
             }
-            String playerName = mc.thePlayer.getDisplayName().getUnformattedText();
+            String playerName = mc.player.getDisplayName().getUnformattedText();
             String entityName = entity.getDisplayName().getUnformattedText();
             if (playerName != null && entityName != null && entityName.length() >= 2) {
-                if (mc.thePlayer.isOnSameTeam((EntityLivingBase) entity) || playerName.startsWith(entityName.substring(0, 2))) {
+                if (mc.player.isOnSameTeam((EntityLivingBase) entity) || playerName.startsWith(entityName.substring(0, 2))) {
                     return true;
                 }
             }
@@ -504,13 +505,13 @@ public final class Utils {
 
     public static void setSpeed(double n) {
         if (n == 0.0) {
-            mc.thePlayer.motionZ = 0.0;
-            mc.thePlayer.motionX = 0.0;
+            mc.player.motionZ = 0.0;
+            mc.player.motionX = 0.0;
             return;
         }
         float n3 = n();
-        mc.thePlayer.motionX = -Math.sin(n3) * n;
-        mc.thePlayer.motionZ = Math.cos(n3) * n;
+        mc.player.motionX = -Math.sin(n3) * n;
+        mc.player.motionZ = Math.cos(n3) * n;
     }
 
     public static void resetTimer() {
@@ -521,14 +522,14 @@ public final class Utils {
         if (!Utils.nullCheck()) {
             return false;
         }
-        return (mc.currentScreen != null) && (mc.thePlayer.inventoryContainer instanceof ContainerPlayer) && (mc.currentScreen instanceof GuiInventory);
+        return (mc.currentScreen != null) && (mc.player.inventoryContainer instanceof ContainerPlayer) && (mc.currentScreen instanceof GuiInventory);
     }
 
     public static boolean isSkyWars() {
         if (!Utils.nullCheck()) {
             return false;
         }
-        final Scoreboard scoreboard = mc.theWorld.getScoreboard();
+        final Scoreboard scoreboard = mc.world.getScoreboard();
         if (scoreboard == null) {
             return false;
         }
@@ -545,7 +546,7 @@ public final class Utils {
         if (!Utils.nullCheck()) {
             return -1;
         }
-        final Scoreboard scoreboard = mc.theWorld.getScoreboard();
+        final Scoreboard scoreboard = mc.world.getScoreboard();
         if (scoreboard == null) {
             return -1;
         }
@@ -586,10 +587,10 @@ public final class Utils {
 
     public static List<String> getSidebarLines() {
         final List<String> lines = new ArrayList<>();
-        if (mc.theWorld == null) {
+        if (mc.world == null) {
             return lines;
         }
-        final Scoreboard scoreboard = mc.theWorld.getScoreboard();
+        final Scoreboard scoreboard = mc.world.getScoreboard();
         if (scoreboard == null) {
             return lines;
         }
@@ -627,7 +628,7 @@ public final class Utils {
 
     public static boolean isMoving() {
         if (!Utils.nullCheck()) return false;
-        return mc.thePlayer.moveForward != 0.0F || mc.thePlayer.moveStrafing != 0.0F;
+        return mc.player.moveForward != 0.0F || mc.player.moveStrafing != 0.0F;
     }
 
     public static void aim(Entity en, float ps) {
@@ -636,8 +637,8 @@ public final class Utils {
             if (t != null) {
                 float y = t[0];
                 float p = t[1] + 4.0F + ps;
-                mc.thePlayer.rotationYaw = y;
-                mc.thePlayer.rotationPitch = p;
+                mc.player.rotationYaw = y;
+                mc.player.rotationPitch = p;
             }
 
         }
@@ -647,38 +648,38 @@ public final class Utils {
         if (q == null) {
             return null;
         } else {
-            double diffX = q.posX - mc.thePlayer.posX;
+            double diffX = q.posX - mc.player.posX;
             double diffY;
             if (q instanceof EntityLivingBase) {
                 EntityLivingBase en = (EntityLivingBase) q;
-                diffY = en.posY + (double) en.getEyeHeight() * 0.9D - (mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight());
+                diffY = en.posY + (double) en.getEyeHeight() * 0.9D - (mc.player.posY + (double) mc.player.getEyeHeight());
             } else {
-                diffY = (q.getEntityBoundingBox().minY + q.getEntityBoundingBox().maxY) / 2.0D - (mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight());
+                diffY = (q.getEntityBoundingBox().minY + q.getEntityBoundingBox().maxY) / 2.0D - (mc.player.posY + (double) mc.player.getEyeHeight());
             }
 
-            double diffZ = q.posZ - mc.thePlayer.posZ;
+            double diffZ = q.posZ - mc.player.posZ;
             double dist = MathHelper.sqrt_double(diffX * diffX + diffZ * diffZ);
             float yaw = (float) (Math.atan2(diffZ, diffX) * 180.0D / 3.141592653589793D) - 90.0F;
             float pitch = (float) (-(Math.atan2(diffY, dist) * 180.0D / 3.141592653589793D));
-            return new float[]{mc.thePlayer.rotationYaw + MathHelper.wrapAngleTo180_float(yaw - mc.thePlayer.rotationYaw), mc.thePlayer.rotationPitch + MathHelper.wrapAngleTo180_float(pitch - mc.thePlayer.rotationPitch)};
+            return new float[]{mc.player.rotationYaw + MathHelper.wrapAngleTo180_float(yaw - mc.player.rotationYaw), mc.player.rotationPitch + MathHelper.wrapAngleTo180_float(pitch - mc.player.rotationPitch)};
         }
     }
 
     public static double n(Entity en) {
-        return ((double) (mc.thePlayer.rotationYaw - getYaw(en)) % 360.0D + 540.0D) % 360.0D - 180.0D;
+        return ((double) (mc.player.rotationYaw - getYaw(en)) % 360.0D + 540.0D) % 360.0D - 180.0D;
     }
 
     public static float getYaw(Entity ent) {
-        double x = ent.posX - mc.thePlayer.posX;
-        double z = ent.posZ - mc.thePlayer.posZ;
+        double x = ent.posX - mc.player.posX;
+        double z = ent.posZ - mc.player.posZ;
         double yaw = Math.atan2(x, z) * 57.29577951308232;
         return (float) (yaw * -1.0D);
     }
 
     public static void ss(double s, boolean m) {
         if (!m || isMoving()) {
-            mc.thePlayer.motionX = -Math.sin(gd()) * s;
-            mc.thePlayer.motionZ = Math.cos(gd()) * s;
+            mc.player.motionX = -Math.sin(gd()) * s;
+            mc.player.motionZ = Math.cos(gd()) * s;
         }
     }
 
@@ -691,25 +692,25 @@ public final class Utils {
     }
 
     public static float gd() {
-        float yw = mc.thePlayer.rotationYaw;
-        if (mc.thePlayer.moveForward < 0.0F) {
+        float yw = mc.player.rotationYaw;
+        if (mc.player.moveForward < 0.0F) {
             yw += 180.0F;
         }
 
         float f;
-        if (mc.thePlayer.moveForward < 0.0F) {
+        if (mc.player.moveForward < 0.0F) {
             f = -0.5F;
-        } else if (mc.thePlayer.moveForward > 0.0F) {
+        } else if (mc.player.moveForward > 0.0F) {
             f = 0.5F;
         } else {
             f = 1.0F;
         }
 
-        if (mc.thePlayer.moveStrafing > 0.0F) {
+        if (mc.player.moveStrafing > 0.0F) {
             yw -= 90.0F * f;
         }
 
-        if (mc.thePlayer.moveStrafing < 0.0F) {
+        if (mc.player.moveStrafing < 0.0F) {
             yw += 90.0F * f;
         }
 
@@ -734,7 +735,7 @@ public final class Utils {
     }
 
     public static double getHorizontalSpeed() {
-        return getHorizontalSpeed(mc.thePlayer);
+        return getHorizontalSpeed(mc.player);
     }
 
     public static double getHorizontalSpeed(Entity entity) {
@@ -742,11 +743,11 @@ public final class Utils {
     }
 
     public static boolean onEdge() {
-        return onEdge(mc.thePlayer);
+        return onEdge(mc.player);
     }
 
     public static boolean onEdge(Entity entity) {
-        return mc.theWorld.getCollidingBoundingBoxes(entity, entity.getEntityBoundingBox().offset(entity.motionX / 3.0D, -1.0D, entity.motionZ / 3.0D)).isEmpty();
+        return mc.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(entity.motionX / 3.0D, -1.0D, entity.motionZ / 3.0D)).isEmpty();
     }
 
     public static double gbps(Entity en, int d) {
@@ -757,7 +758,7 @@ public final class Utils {
     }
 
     public static String removeFormatCodes(String str) {
-        return str.replace("¬ßk", "").replace("¬ßl", "").replace("¬ßm", "").replace("¬ßn", "").replace("¬ßo", "").replace("¬ßr", "");
+        return str.replace("°Ïk", "").replace("°Ïl", "").replace("°Ïm", "").replace("°Ïn", "").replace("°Ïo", "").replace("°Ïr", "");
     }
 
     public static boolean isNotLeftClicking() {
@@ -793,17 +794,17 @@ public final class Utils {
 
     public static EntityLivingBase raytrace(final int n) {
         Entity entity = null;
-        MovingObjectPosition rayTrace = mc.thePlayer.rayTrace((double) n, 1.0f);
-        final Vec3 getPositionEyes = mc.thePlayer.getPositionEyes(1.0f);
-        final float rotationYaw = mc.thePlayer.rotationYaw;
-        final float rotationPitch = mc.thePlayer.rotationPitch;
+        MovingObjectPosition rayTrace = mc.player.rayTrace((double) n, 1.0f);
+        final Vec3 getPositionEyes = mc.player.getPositionEyes(1.0f);
+        final float rotationYaw = mc.player.rotationYaw;
+        final float rotationPitch = mc.player.rotationPitch;
         final float cos = MathHelper.cos(-rotationYaw * 0.017453292f - 3.1415927f);
         final float sin = MathHelper.sin(-rotationYaw * 0.017453292f - 3.1415927f);
         final float n2 = -MathHelper.cos(-rotationPitch * 0.017453292f);
         final Vec3 vec3 = new Vec3((double) (sin * n2), (double) MathHelper.sin(-rotationPitch * 0.017453292f), (double) (cos * n2));
         final Vec3 addVector = getPositionEyes.addVector(vec3.xCoord * (double) n, vec3.yCoord * (double) n, vec3.zCoord * (double) n);
         Vec3 vec4 = null;
-        final List<Entity> getEntitiesWithinAABBExcludingEntity = mc.theWorld.getEntitiesWithinAABBExcludingEntity(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec3.xCoord * (double) n, vec3.yCoord * (double) n, vec3.zCoord * (double) n).expand(1.0, 1.0, 1.0));
+        final List<Entity> getEntitiesWithinAABBExcludingEntity = mc.world.getEntitiesWithinAABBExcludingEntity(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec3.xCoord * (double) n, vec3.yCoord * (double) n, vec3.zCoord * (double) n).expand(1.0, 1.0, 1.0));
         double n3 = n;
         for (Entity entity1 : getEntitiesWithinAABBExcludingEntity) {
             if (entity1.canBeCollidedWith()) {
@@ -856,25 +857,25 @@ public final class Utils {
         }
     }
     public static double PitchFromEntity(EntityPlayer en, float f) {
-        return mc.thePlayer.rotationPitch - pitchToEntity(en, f);
+        return mc.player.rotationPitch - pitchToEntity(en, f);
     }
     public static double fovFromEntity(EntityPlayer en) {
-        return ((((double) (mc.thePlayer.rotationYaw - fovToEntity(en)) % 360.0D) + 540.0D) % 360.0D) - 180.0D;
+        return ((((double) (mc.player.rotationYaw - fovToEntity(en)) % 360.0D) + 540.0D) % 360.0D) - 180.0D;
     }
 
     public static float fovFromEntityf(EntityPlayer en) {
-        return (float) (((((mc.thePlayer.rotationYaw - fovToEntity(en)) % 360.0D) + 540.0D) % 360.0D) - 180.0D);
+        return (float) (((((mc.player.rotationYaw - fovToEntity(en)) % 360.0D) + 540.0D) % 360.0D) - 180.0D);
     }
 
     public static float fovToEntity(EntityPlayer ent) {
-        double x = ent.posX - mc.thePlayer.posX;
-        double z = ent.posZ - mc.thePlayer.posZ;
+        double x = ent.posX - mc.player.posX;
+        double z = ent.posZ - mc.player.posZ;
         double yaw = Math.atan2(x, z) * 57.2957795D;
         return (float) (yaw * -1.0D);
     }
     public static float pitchToEntity(EntityPlayer ent, float f) {
-        double x = mc.thePlayer.getDistanceToEntity(ent);
-        double y = mc.thePlayer.posY - (ent.posY + f);
+        double x = mc.player.getDistanceToEntity(ent);
+        double y = mc.player.posY - (ent.posY + f);
         double pitch = (((Math.atan2(x, y) * 180.0D) / 3.141592653589793D));
         return (float) (90 - pitch);
     }
@@ -894,10 +895,10 @@ public final class Utils {
 
     public static List<String> gsl() {
         List<String> lines = new ArrayList();
-        if (mc.theWorld == null) {
+        if (mc.world == null) {
             return lines;
         } else {
-            Scoreboard scoreboard = mc.theWorld.getScoreboard();
+            Scoreboard scoreboard = mc.world.getScoreboard();
             if (scoreboard == null) {
                 return lines;
             } else {
@@ -938,7 +939,7 @@ public final class Utils {
     }
 
     public static void playerSwing() {
-        EntityPlayerSP p = mc.thePlayer;
+        EntityPlayerSP p = mc.player;
         int armSwingEnd = p.isPotionActive(Potion.digSpeed) ? 6 - (1 + p.getActivePotionEffect(Potion.digSpeed).getAmplifier()) : (p.isPotionActive(Potion.digSlowdown) ? 6 + (1 + p.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) * 2 : 6);
         if (!p.isSwingInProgress || p.swingProgressInt >= armSwingEnd / 2 || p.swingProgressInt < 0) {
             p.swingProgressInt = -1;
@@ -953,11 +954,11 @@ public final class Utils {
 
     public static boolean overAir() {
         if (!Utils.nullCheck()) return false;
-        return mc.theWorld.isAirBlock(new BlockPos(mc.thePlayer.posX, mc.thePlayer.posY - 1.0, mc.thePlayer.posZ));
+        return mc.world.isAirBlock(new BlockPos(mc.player.posX, mc.player.posY - 1.0, mc.player.posZ));
     }
 
     public static boolean overPlaceable(double yOffset) {
-        BlockPos playerPos = new BlockPos(mc.thePlayer.posX, mc.thePlayer.posY + yOffset, mc.thePlayer.posZ);
+        BlockPos playerPos = new BlockPos(mc.player.posX, mc.player.posY + yOffset, mc.player.posZ);
         return BlockUtils.replaceable(playerPos) || BlockUtils.isFluid(BlockUtils.getBlock(playerPos));
     }
 
@@ -1000,7 +1001,7 @@ public final class Utils {
                     if (format.getChar() == c)
                         continue forEach;
             }
-            if (c == '¬ß') {
+            if (c == '°Ï') {
                 doIgnore = true;
                 continue;
             }
@@ -1012,12 +1013,12 @@ public final class Utils {
     }
 
     public static float getEyeHeight() {
-        float f = mc.thePlayer.eyeHeight;
-        if (mc.thePlayer.isPlayerSleeping()) {
+        float f = mc.player.eyeHeight;
+        if (mc.player.isPlayerSleeping()) {
             f = 0.2F;
         }
 
-        if (mc.thePlayer.isSneaking()) {
+        if (mc.player.isSneaking()) {
             f -= 0.08F;
         }
 
@@ -1025,7 +1026,7 @@ public final class Utils {
     }
 
     public static keystrokesmod.script.classes.Vec3 getEyePos(@NotNull Entity entity, keystrokesmod.script.classes.@NotNull Vec3 position) {
-        return position.add(new keystrokesmod.script.classes.Vec3(0, entity == mc.thePlayer ? getEyeHeight() : entity.getEyeHeight(), 0));
+        return position.add(new keystrokesmod.script.classes.Vec3(0, entity == mc.player ? getEyeHeight() : entity.getEyeHeight(), 0));
     }
 
     public static keystrokesmod.script.classes.Vec3 getEyePos(Entity entity) {
@@ -1033,7 +1034,7 @@ public final class Utils {
     }
 
     public static keystrokesmod.script.classes.Vec3 getEyePos() {
-        return getEyePos(mc.thePlayer);
+        return getEyePos(mc.player);
     }
 
     public static boolean isTargetNearby() {
@@ -1041,10 +1042,10 @@ public final class Utils {
     }
 
     public static boolean isTargetNearby(double dist) {
-        return mc.theWorld.playerEntities.stream()
-                .filter(target -> target != mc.thePlayer)
+        return mc.world.playerEntities.stream()
+                .filter(target -> target != mc.player)
                 .filter(target -> target instanceof EntityPlayer)
-                .anyMatch(target -> new keystrokesmod.script.classes.Vec3(target).distanceTo(mc.thePlayer) < dist);
+                .anyMatch(target -> new keystrokesmod.script.classes.Vec3(target).distanceTo(mc.player) < dist);
     }
 
     /**
@@ -1053,29 +1054,29 @@ public final class Utils {
      * @return in liquid
      */
     public static boolean inLiquid() {
-        return mc.thePlayer.isInWater() || mc.thePlayer.isInLava();
+        return mc.player.isInWater() || mc.player.isInLava();
     }
 
     public static boolean isLobby() {
-        if (mc.theWorld == null) {
+        if (mc.world == null) {
             return true;
         }
 
-        List<Entity> entities = mc.theWorld.getLoadedEntityList();
+        List<Entity> entities = mc.world.getLoadedEntityList();
         for (Entity entity : entities) {
-            if (entity != null && entity.getName().equals("¬ße¬ßlCLICK TO PLAY")) {
+            if (entity != null && entity.getName().equals("°Ïe°ÏlCLICK TO PLAY")) {
                 return true;
             }
         }
 
         boolean hasNetherStar = false;
         boolean hasCompass = false;
-        for (ItemStack stack : mc.thePlayer.inventory.mainInventory) {
+        for (ItemStack stack : mc.player.inventory.mainInventory) {
             if (stack != null) {
-                if (stack.getItem() == Items.nether_star) {
+                if (stack.getItem() == Items.NETHER_STAR) {
                     hasNetherStar = true;
                 }
-                if (stack.getItem() == Items.compass) {
+                if (stack.getItem() == Items.COMPASS) {
                     hasCompass = true;
                 }
                 if (hasNetherStar && hasCompass) {
@@ -1163,18 +1164,18 @@ public final class Utils {
     }
 
     /**
-     * ËøîÂõû‰∏Ä‰∏™ÂèçËΩ¨ËßÜÂõæÁöÑÂàóË°®ÔºåËÄå‰∏ç‰øÆÊîπÂéüÂàóË°®„ÄÇ
+     * ∑µªÿ“ª∏ˆ∑¥◊™ ”Õºµƒ¡–±Ì£¨∂¯≤ª–ﬁ∏ƒ‘≠¡–±Ì°£
      *
-     * @param list ÂéüÂßãÂàóË°®
-     * @param <T>  ÂàóË°®ÁöÑÂÖÉÁ¥†Á±ªÂûã
-     * @return ÂèçËΩ¨ËßÜÂõæÁöÑÂàóË°®
+     * @param list ‘≠ º¡–±Ì
+     * @param <T>  ¡–±Ìµƒ‘™Àÿ¿‡–Õ
+     * @return ∑¥◊™ ”Õºµƒ¡–±Ì
      */
     public static <T> @NotNull List<T> reversed(@NotNull List<T> list) {
         return new ReversedList<>(list);
     }
 
     /**
-     * ÂÜÖÈÉ®Á±ªÔºöÂÆûÁé∞ÂèçËΩ¨ËßÜÂõæÁöÑÂàóË°®„ÄÇ
+     * ƒ⁄≤ø¿‡£∫ µœ÷∑¥◊™ ”Õºµƒ¡–±Ì°£
      */
     private static class ReversedList<T> extends AbstractList<T> {
         private final @NotNull List<T> original;
@@ -1185,7 +1186,7 @@ public final class Utils {
 
         @Override
         public T get(int index) {
-            // Âä®ÊÄÅËÆ°ÁÆóÂèçËΩ¨Á¥¢Âºï
+            // ∂ØÃ¨º∆À„∑¥◊™À˜“˝
             int reversedIndex = size() - 1 - index;
             return original.get(reversedIndex);
         }
