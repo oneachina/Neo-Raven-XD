@@ -13,6 +13,7 @@ public final class Const {
     public static final List<String> CHANGELOG = Collections.unmodifiableList(Arrays.asList(
             "[*] update version to 3.0.2",
             "[*] fix Unexpected StringIndexOutOfBoundsException while 'isTeamMate' in'Utils' String index out of range:2",
-            "[!] This is SilenceFix XD"
+            "[!] This is SilenceFix XD",
+            "[*] Recode Something"
     ));
 }

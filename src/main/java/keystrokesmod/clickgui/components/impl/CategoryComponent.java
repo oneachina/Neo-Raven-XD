@@ -162,7 +162,7 @@ public class CategoryComponent {
         int h = 0;
         if (!this.modules.isEmpty() && this.categoryOpened) {
             IComponent c;
-            for (Iterator<ModuleComponent> var3 = this.modules.iterator(); var3.hasNext(); h += c.gh()) {
+            for (Iterator<ModuleComponent> var3 = this.modules.iterator(); var3.hasNext(); h += c.return0()) {
                 c = var3.next();
             }
             big = h;
@@ -221,7 +221,7 @@ public class CategoryComponent {
         int o = this.buttonHeight + 3;
 
         IComponent c;
-        for (Iterator<ModuleComponent> var2 = this.modules.iterator(); var2.hasNext(); o += c.gh()) {
+        for (Iterator<ModuleComponent> var2 = this.modules.iterator(); var2.hasNext(); o += c.return0()) {
             c = var2.next();
             c.so(o);
         }

@@ -18,7 +18,7 @@ public class BindComponent extends Component {
     public BindComponent(ModuleComponent moduleComponent, int bind) {
         super(moduleComponent);
         this.x = moduleComponent.categoryComponent.getX() + moduleComponent.categoryComponent.gw();
-        this.y = moduleComponent.categoryComponent.getY() + moduleComponent.o;
+        this.y = moduleComponent.categoryComponent.getY() + moduleComponent.offset;
         this.bind = bind;
     }
 
@@ -41,7 +41,7 @@ public class BindComponent extends Component {
     public void onClick(int x, int y, int b) {
         if (this.getSetting() != null && !this.getSetting().isVisible()) return;
 
-        if (this.i(x, y) && this.parent.po && this.parent.mod.canBeEnabled()) {
+        if (this.i(x, y) && this.parent.open && this.parent.mod.canBeEnabled()) {
             if (b == 0) {
                 this.isBinding = !this.isBinding;
             }
@@ -89,7 +89,7 @@ public class BindComponent extends Component {
         return x > this.x && x < this.x + this.parent.categoryComponent.gw() && y > this.y - 1 && y < this.y + 12;
     }
 
-    public int gh() {
+    public int return0() {
         return 16;
     }
 

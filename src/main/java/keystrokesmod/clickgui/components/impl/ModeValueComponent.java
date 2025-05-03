@@ -15,7 +15,7 @@ public class ModeValueComponent extends Component {
         super(moduleComponent);
         this.modeValue = modeValue;
         this.x = moduleComponent.categoryComponent.getX() + moduleComponent.categoryComponent.gw();
-        this.y = moduleComponent.categoryComponent.getY() + moduleComponent.o;
+        this.y = moduleComponent.categoryComponent.getY() + moduleComponent.offset;
         this.o = o;
     }
 
@@ -51,7 +51,7 @@ public class ModeValueComponent extends Component {
     public void onClick(int x, int y, int b) {
         if (this.getSetting() != null && !this.getSetting().isVisible()) return;
 
-        if (isHover(x, y) && this.parent.po) {
+        if (isHover(x, y) && this.parent.open) {
             changeValue(b, Keyboard.isKeyDown(Client.mc.gameSettings.keyBindSneak.getKeyCode()));
             parent.categoryComponent.render();
         }

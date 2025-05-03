@@ -46,7 +46,7 @@ public abstract class Component implements IComponent {
         }
         onDrawScreen(x, y);
 
-        if (getSetting() != null && hover && getSetting().isVisible() && getParent().po && Gui.toolTip.isToggled() && getSetting().getPrettyToolTip() != null) {
+        if (getSetting() != null && hover && getSetting().isVisible() && getParent().open && Gui.toolTip.isToggled() && getSetting().getPrettyToolTip() != null) {
             Client.clickGui.run(() -> RenderUtils.drawToolTip(getSetting().getPrettyToolTip(), x, y));
         }
     }
