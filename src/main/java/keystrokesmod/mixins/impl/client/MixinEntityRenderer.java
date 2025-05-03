@@ -2,6 +2,7 @@ package keystrokesmod.mixins.impl.client;
 
 
 import com.google.common.base.Predicates;
+import keystrokesmod.minecraft.Vec3;
 import keystrokesmod.module.impl.other.RotationHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -9,6 +10,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +25,7 @@ import java.util.List;
 @Mixin(EntityRenderer.class)
 public class MixinEntityRenderer {
 
+    @Final
     @Shadow private Minecraft mc;
 
     @Shadow private Entity pointedEntity;
@@ -33,13 +39,13 @@ public class MixinEntityRenderer {
     @Inject(method = "getMouseOver", at = @At("HEAD"), cancellable = true)
     public void getMouseOver(float p_getMouseOver_1_, CallbackInfo ci) {
         Entity entity = this.mc.getRenderViewEntity();
-        if (entity != null && this.mc.theWorld != null) {
+        if (entity != null && this.mc.world != null) {
             this.mc.mcProfiler.startSection("pick");
             this.mc.pointedEntity = null;
             double d0 = this.mc.playerController.getBlockReachDistance();
             this.mc.objectMouseOver = entity.rayTrace(d0, p_getMouseOver_1_);
             double d1 = d0;
-            Vec3 vec3 = entity.getPositionEyes(p_getMouseOver_1_);
+            Vec3 vec3 = (Vec3) entity.getPositionEyes(p_getMouseOver_1_);
             boolean flag = false;
             if (this.mc.playerController.extendedReach()) {
                 d0 = 6.0;
@@ -57,9 +63,9 @@ public class MixinEntityRenderer {
             this.pointedEntity = null;
             Vec3 vec33 = null;
             float f = 1.0F;
-            List<Entity> list = this.mc.theWorld.getEntitiesInAABBexcluding(
+            List<Entity> list = this.mc.world.getEntitiesInAABBexcluding(
                     entity, entity.getEntityBoundingBox()
-                            .addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0)
+                            .grow(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0)
                             .expand(f, f, f),
                     Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith)
             );
@@ -68,38 +74,39 @@ public class MixinEntityRenderer {
             for (Entity entity1 : list) {
                 float f1 = entity1.getCollisionBorderSize();
                 AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand(f1, f1, f1);
-                MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
-                if (axisalignedbb.isVecInside(vec3)) {
+                RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
+                if (axisalignedbb.contains(vec3)) {
                     if (d2 >= 0.0) {
                         this.pointedEntity = entity1;
-                        vec33 = movingobjectposition == null ? vec3 : movingobjectposition.hitVec;
+                        vec33 = movingobjectposition == null ? vec3 : (Vec3) movingobjectposition.hitVec;
                         d2 = 0.0;
                     }
                 } else if (movingobjectposition != null) {
                     double d3 = vec3.distanceTo(movingobjectposition.hitVec);
                     if (d3 < d2 || d2 == 0.0) {
-                        if (entity1 == entity.ridingEntity && !entity.canRiderInteract()) {
+                        if (entity1 == entity.getRidingEntity() && !entity.canRiderInteract()) {
                             if (d2 == 0.0) {
                                 this.pointedEntity = entity1;
-                                vec33 = movingobjectposition.hitVec;
+                                vec33 = (Vec3) movingobjectposition.hitVec;
                             }
                         } else {
                             this.pointedEntity = entity1;
-                            vec33 = movingobjectposition.hitVec;
+                            vec33 = (Vec3) movingobjectposition.hitVec;
                             d2 = d3;
                         }
                     }
                 }
             }
 
-            if (this.pointedEntity != null && flag && vec3.distanceTo(vec33) > 3.0) {
+            if (vec33 != null && this.pointedEntity != null && flag && vec3.distanceTo(vec33) > 3.0) {
                 this.pointedEntity = null;
-                assert vec33 != null;
-                this.mc.objectMouseOver = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS, vec33, null, new BlockPos(vec33));
+                this.mc.objectMouseOver = new RayTraceResult(RayTraceResult.Type.MISS, vec33, null, new BlockPos(vec33));
             }
 
             if (this.pointedEntity != null && (d2 < d1 || this.mc.objectMouseOver == null)) {
-                this.mc.objectMouseOver = new MovingObjectPosition(this.pointedEntity, vec33);
+                if (vec33 != null) {
+                    this.mc.objectMouseOver = new RayTraceResult(this.pointedEntity, vec33);
+                }
                 if (this.pointedEntity instanceof EntityLivingBase || this.pointedEntity instanceof EntityItemFrame) {
                     this.mc.pointedEntity = this.pointedEntity;
                 }
