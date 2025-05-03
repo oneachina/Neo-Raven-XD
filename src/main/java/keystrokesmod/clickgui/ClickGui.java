@@ -59,9 +59,9 @@ public class ClickGui extends GuiScreen {
         clickHistory = new ArrayList<>(length);
         for (int i = 0; i < length; ++i) {
             Module.category c = values[i];
-            CategoryComponent f = new CategoryComponent(c);
-            f.y(y);
-            categories.put(c, f);
+            CategoryComponent categoryComponent = new CategoryComponent(c);
+            categoryComponent.y(y);
+            categories.put(c, categoryComponent);
             clickHistory.add(c);
             y += 20;
         }
@@ -122,12 +122,12 @@ public class ClickGui extends GuiScreen {
             int h = this.height / 4;
             int wd = this.width / 2;
             int w_c = 30 - this.aT.getValueInt(0, 30, 3);
-            getFont().drawCenteredString("r", wd + 1 - w_c, h - 25, Utils.getChroma(2L, 1500L));
-            getFont().drawCenteredString("a", wd - w_c, h - 15, Utils.getChroma(2L, 1200L));
-            getFont().drawCenteredString("v", wd - w_c, h - 5, Utils.getChroma(2L, 900L));
-            getFont().drawCenteredString("e", wd - w_c, h + 5, Utils.getChroma(2L, 600L));
-            getFont().drawCenteredString("n", wd - w_c, h + 15, Utils.getChroma(2L, 300L));
-            getFont().drawCenteredString("XD", wd + 1 + w_c, h + 30, Utils.getChroma(2L, 0L));
+            getFont().drawCenteredString("Si", wd + 1 - w_c, h - 25, Utils.getChroma(2L, 1500L));
+            getFont().drawCenteredString("len", wd - w_c, h - 15, Utils.getChroma(2L, 1200L));
+            getFont().drawCenteredString("ce", wd - w_c, h - 5, Utils.getChroma(2L, 900L));
+            getFont().drawCenteredString("F", wd - w_c, h + 5, Utils.getChroma(2L, 600L));
+            getFont().drawCenteredString("I", wd - w_c, h + 15, Utils.getChroma(2L, 300L));
+            getFont().drawCenteredString("X", wd + 1 + w_c, h + 30, Utils.getChroma(2L, 0L));
             this.drawVerticalLine(wd - 10 - w_c, h - 30, h + 43, Color.white.getRGB());
             this.drawVerticalLine(wd + 10 + w_c, h - 30, h + 43, Color.white.getRGB());
             if (this.aL != null) {
