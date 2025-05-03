@@ -21,7 +21,7 @@ public abstract class MixinInventoryPlayer {
 
     @Inject(method = "getCurrentItem", at = @At("HEAD"), cancellable = true)
     public void getCurrentItem(@NotNull CallbackInfoReturnable<ItemStack> cir) {
-        if (Utils.nullCheck() && this.player == Client.mc.thePlayer) {
+        if (Utils.nullCheck() && this.player == Client.mc.player) {
             cir.setReturnValue(SlotHandler.getHeldItem());
         }
     }

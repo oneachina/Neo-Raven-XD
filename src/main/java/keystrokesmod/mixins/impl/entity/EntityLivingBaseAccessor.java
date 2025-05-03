@@ -3,6 +3,7 @@ package keystrokesmod.mixins.impl.entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.Map;
@@ -10,19 +11,19 @@ import java.util.Map;
 @Mixin(EntityLivingBase.class)
 public interface EntityLivingBaseAccessor {
 
-    @Accessor("newPosX")
+    @Unique
     double getNewPosX();
 
-    @Accessor("newPosY")
+    @Unique
     double getNewPosY();
 
-    @Accessor("newPosZ")
+    @Unique
     double getNewPosZ();
 
-    @Accessor("newRotationYaw")
+    @Unique
     double getNewRotationYaw();
 
-    @Accessor("newRotationPitch")
+    @Unique
     double getNewRotationPitch();
 
     @Accessor("newPosRotationIncrements")

@@ -6,16 +6,12 @@ import keystrokesmod.module.impl.movement.KeepSprint;
 import keystrokesmod.module.impl.render.Particles;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
-import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.potion.Potion;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import keystrokesmod.Client;
@@ -43,7 +39,7 @@ public abstract class MixinEntityPlayer extends EntityLivingBase {
     @Inject(method = "attackTargetEntityWithCurrentItem", at = @At("HEAD"), cancellable = true)
     public void attackTargetEntityWithCurrentItem(Entity p_attackTargetEntityWithCurrentItem_1_, CallbackInfo ci) {
         if (ForgeHooks.onPlayerAttackTarget(((EntityPlayer) (Object) this), p_attackTargetEntityWithCurrentItem_1_)) {
-            if (p_attackTargetEntityWithCurrentItem_1_.canAttackWithItem() && !p_attackTargetEntityWithCurrentItem_1_.hitByEntity(this)) {
+            if (p_attackTargetEntityWithCurrentItem_1_.canBeAttackedWithItem() && !p_attackTargetEntityWithCurrentItem_1_.hitByEntity(this)) {
                 float f = (float) this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
                 int i = 0;
                 float f1;

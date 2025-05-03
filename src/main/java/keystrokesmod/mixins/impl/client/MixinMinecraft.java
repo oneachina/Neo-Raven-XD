@@ -12,16 +12,17 @@ import keystrokesmod.module.impl.render.Animations;
 import keystrokesmod.module.impl.render.FreeLook;
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.Display;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static keystrokesmod.Client.mc;
 
-@SuppressWarnings("UnresolvedMixinReference")
 @Mixin(value = Minecraft.class, priority = 1001)
 public abstract class MixinMinecraft {
 
@@ -30,22 +31,18 @@ public abstract class MixinMinecraft {
         Client.EVENT_BUS.post(new PreTickEvent());
     }
 
-    @SuppressWarnings("DiscouragedShift")
-    @Inject(method = "runTick", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/multiplayer/PlayerControllerMP;onStoppedUsingItem(Lnet/minecraft/entity/player/EntityPlayer;)V",
-            shift = At.Shift.BY, by = 2
-    ))
+    @Unique
     private void onRunTick$usingWhileDigging(CallbackInfo ci) {
         if (ModuleManager.animations != null && ModuleManager.animations.isEnabled() && Animations.swingWhileDigging.isToggled()
                 && mc.gameSettings.keyBindAttack.isKeyDown()) {
-            if (mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-                mc.thePlayer.swingItem();
+            if (mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
+                mc.player.swingArm(EnumHand.MAIN_HAND);
             }
         }
     }
 
-    @Inject(method = "clickMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/EntityPlayerSP;swingItem()V"), cancellable = true)
-    private void beforeSwingByClick(CallbackInfo ci) {
+    @Unique
+    private void neo_Raven_XD_Test$beforeSwingByClick(CallbackInfo ci) {
         ClickEvent event = new ClickEvent();
         Client.EVENT_BUS.post(event);
         if (event.isCancelled())

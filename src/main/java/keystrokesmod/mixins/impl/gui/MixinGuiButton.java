@@ -23,18 +23,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.awt.*;
 
 
-@SuppressWarnings("UnresolvedMixinReference")
 @Mixin(GuiButton.class)
 public abstract class MixinGuiButton extends Gui {
-    @Shadow
     @Final
-    protected static ResourceLocation buttonTextures;
+    private static ResourceLocation buttonTextures;
     @Shadow
     public boolean visible;
-    @Shadow
-    public int xPosition;
-    @Shadow
-    public int yPosition;
+    @Unique
+    public int neo_Raven_XD_Test$xPosition;
+    @Unique
+    public int neo_Raven_XD_Test$yPosition;
     @Shadow
     public int width;
     @Shadow
@@ -66,12 +64,12 @@ public abstract class MixinGuiButton extends Gui {
     protected abstract void mouseDragged(Minecraft p_mouseDragged_1_, int p_mouseDragged_2_, int p_mouseDragged_3_);
 
     @Inject(method = "drawButton", at = @At("HEAD"), cancellable = true)
-    public void onDrawButton(Minecraft minecraft, int x, int y, CallbackInfo ci) {
+    public void onDrawButton(Minecraft p_191745_1_, int p_191745_2_, int p_191745_3_, float p_191745_4_, CallbackInfo ci) {
         if (this.visible) {
             final int height = (int) Math.round(this.height * 0.9);
             final boolean blur = ModuleManager.clientTheme.buttonBlur.isToggled();
             
-            this.hovered = x >= xPosition && y >= yPosition && x < xPosition + this.width && y < yPosition + height;
+            this.hovered = p_191745_2_ >= neo_Raven_XD_Test$xPosition && p_191745_3_ >= neo_Raven_XD_Test$yPosition && p_191745_2_ < neo_Raven_XD_Test$xPosition + this.width && p_191745_3_ < neo_Raven_XD_Test$yPosition + height;
 
             if (hovered) {
                 ravenXD$hoverValue = (int) Math.min(ravenXD$hoverValue + 4.0 * 150 / Minecraft.getDebugFPS(), 200);
@@ -82,31 +80,31 @@ public abstract class MixinGuiButton extends Gui {
 
             Color rectColor = new Color(35, 37, 43, ravenXD$hoverValue);
             rectColor = raven_XD$interpolateColorC(rectColor, ColorUtils.brighter(rectColor, 0.4f));
-            RenderUtils.drawBloomShadow(xPosition - 3, yPosition - 3, width + 6, height + 6, 12, new Color(0, 0, 0, 50), false);
-            RRectUtils.drawRoundOutline(xPosition, yPosition, width, height, 4, 0.0015f, rectColor, new Color(255, 255, 255, 20));
+            RenderUtils.drawBloomShadow(neo_Raven_XD_Test$xPosition - 3, neo_Raven_XD_Test$yPosition - 3, width + 6, height + 6, 12, new Color(0, 0, 0, 50), false);
+            RRectUtils.drawRoundOutline(neo_Raven_XD_Test$xPosition, neo_Raven_XD_Test$yPosition, width, height, 4, 0.0015f, rectColor, new Color(255, 255, 255, 20));
             if (blur) {
                 if (GaussianBlur.startBlur()) {
-                    RRectUtils.drawRoundOutline(xPosition, yPosition, width, height, 4, 0.0015f, new Color(0, 0, 0, 5), new Color(0, 0, 0, 5));
-                    RRectUtils.drawRoundOutline(xPosition, yPosition, width, height, 4, 0.0015f, new Color(0, 0, 0, 50), new Color(200, 200, 200, 60));
+                    RRectUtils.drawRoundOutline(neo_Raven_XD_Test$xPosition, neo_Raven_XD_Test$yPosition, width, height, 4, 0.0015f, new Color(0, 0, 0, 5), new Color(0, 0, 0, 5));
+                    RRectUtils.drawRoundOutline(neo_Raven_XD_Test$xPosition, neo_Raven_XD_Test$yPosition, width, height, 4, 0.0015f, new Color(0, 0, 0, 50), new Color(200, 200, 200, 60));
                     GaussianBlur.endBlur(10, 1);
                 }
             }
 
-            this.mouseDragged(minecraft, x, y);
+            this.mouseDragged(p_191745_1_, p_191745_2_, p_191745_3_);
 
             String text = ModuleManager.clientTheme.buttonLowerCase.isToggled() ?
                     displayString.toLowerCase() : displayString;
 
             if (FontManager.tenacity20.isTextSupported(text)) {
                 FontManager.tenacity20.drawCenteredString(text,
-                        xPosition + this.width / 2.0f,
-                        yPosition + height / 2f - FontManager.tenacity20.height() / 2f,
+                        neo_Raven_XD_Test$xPosition + this.width / 2.0f,
+                        neo_Raven_XD_Test$yPosition + height / 2f - FontManager.tenacity20.height() / 2f,
                         -1
                 );
             } else {
                 FontManager.getMinecraft().drawCenteredString(text,
-                        xPosition + this.width / 2.0f,
-                        yPosition + height / 2f - FontManager.tenacity20.height() / 2f,
+                        neo_Raven_XD_Test$xPosition + this.width / 2.0f,
+                        neo_Raven_XD_Test$yPosition + height / 2f - FontManager.tenacity20.height() / 2f,
                         -1
                 );
             }

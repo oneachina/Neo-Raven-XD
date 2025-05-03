@@ -1,6 +1,7 @@
 package keystrokesmod.mixins.impl.gui;
 
 import keystrokesmod.event.network.PreConnectEvent;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.resources.I18n;
@@ -21,6 +22,8 @@ public abstract class MixinGuiConnecting extends GuiScreen {
     public PreConnectEvent raven_bS$preConnectEvent = null;
     @Shadow
     private NetworkManager networkManager;
+    @Unique
+    private FontRenderer neo_Raven_XD_Test$fontRendererObj;
 
     @Inject(method = "connect", at = @At("HEAD"), cancellable = true)
     public void onConnect(String p_connect_1_, int p_connect_2_, CallbackInfo ci) {
@@ -43,7 +46,7 @@ public abstract class MixinGuiConnecting extends GuiScreen {
         }
 
         this.drawDefaultBackground();
-        this.drawCenteredString(this.fontRendererObj, msg, this.width / 2, this.height / 2 - 50, 16777215);
+        this.drawCenteredString(this.neo_Raven_XD_Test$fontRendererObj, msg, this.width / 2, this.height / 2 - 50, 16777215);
 
         super.drawScreen(p_drawScreen_1_, p_drawScreen_2_, p_drawScreen_3_);
     }

@@ -21,7 +21,6 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.network.login.client.C01PacketEncryptionResponse;
-import net.minecraft.network.play.client.*;
 import keystrokesmod.eventbus.annotations.EventListener;
 import keystrokesmod.event.render.Render2DEvent;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
@@ -155,7 +154,7 @@ public class AutoGapple extends Module {
                 if (slot != mc.thePlayer.inventory.currentItem)
                     PacketUtils.sendPacketNoEvent(new C09PacketHeldItemChange(slot));
                 PacketUtils.sendPacketNoEvent(new C08PacketPlayerBlockPlacement(mc.thePlayer.inventory.getStackInSlot(slot)));
-                ((EntityPlayerAccessor) mc.thePlayer).setItemInUseCount(mc.thePlayer.getItemInUseCount() - 32);
+                ((EntityPlayerAccessor) mc.thePlayer).neo_Raven_XD_Test$setItemInUseCount(mc.thePlayer.getItemInUseCount() - 32);
                 release();
                 if (slot != mc.thePlayer.inventory.currentItem)
                     PacketUtils.sendPacketNoEvent(new C09PacketHeldItemChange(mc.thePlayer.inventory.currentItem));

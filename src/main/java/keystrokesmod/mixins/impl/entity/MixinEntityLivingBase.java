@@ -9,7 +9,6 @@ import keystrokesmod.event.player.PreMoveEvent;
 import keystrokesmod.event.render.SwingAnimationEvent;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.exploit.viaversionfix.ViaVersionFixHelper;
-import keystrokesmod.module.impl.movement.Sprint;
 import keystrokesmod.module.impl.other.RotationHandler;
 import keystrokesmod.utility.MoveUtil;
 import keystrokesmod.utility.RotationUtils;
@@ -17,9 +16,11 @@ import keystrokesmod.utility.Utils;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.NotNull;
@@ -33,10 +34,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static keystrokesmod.Client.mc;
 
-@SuppressWarnings("UnresolvedMixinReference")
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntityLivingBase extends Entity {
     @Unique
@@ -53,15 +54,15 @@ public abstract class MixinEntityLivingBase extends Entity {
 
     @Unique
     public PotionEffect raven_XD$getActivePotionEffect(@NotNull Potion potionIn) {
-        return this.raven_bS$activePotionsMap.get(potionIn.id);
+        return this.raven_bS$activePotionsMap.get(potionIn.delegate);
     }
 
     @Unique
     public boolean raven_XD$isPotionActive(@NotNull Potion potionIn) {
-        return this.raven_bS$activePotionsMap.containsKey(potionIn.id);
+        return this.raven_bS$activePotionsMap.containsKey(potionIn.delegate);
     }
 
-    @Inject(method = "moveEntityWithHeading", at = @At("HEAD"), cancellable = true)
+    @Unique
     public void onPreMoveEntity(float moveForward, float moveStrafing, CallbackInfo ci) {
         if ((Object) this instanceof EntityPlayerSP) {
             PreMoveEvent event = new PreMoveEvent();
@@ -72,7 +73,7 @@ public abstract class MixinEntityLivingBase extends Entity {
         }
     }
 
-    @Redirect(method = "moveEntityWithHeading", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;moveEntity(DDD)V"))
+    @Unique
     public void onMoveEntity(EntityLivingBase instance, double x, double y, double z) {
         if (instance instanceof EntityPlayerSP) {
             MoveEvent event = new MoveEvent(x, y, z);
@@ -86,26 +87,25 @@ public abstract class MixinEntityLivingBase extends Entity {
             z = event.getZ();
         }
 
-        instance.moveEntity(x, y, z);
+        instance.move(MoverType.PLAYER, x, y, z);
     }
 
     /**
      * @author strangerrs
      * @reason mixin func110146f
      */
-    @Inject(method = "func_110146_f", at = @At("HEAD"), cancellable = true)
     protected void func_110146_f(float p_1101461, float p_1101462, CallbackInfoReturnable<Float> cir) {
         float rotationYaw = this.rotationYaw;
         if (RotationHandler.fullBody != null && RotationHandler.rotateBody != null && !RotationHandler.fullBody.isToggled() && RotationHandler.rotateBody.isToggled() && (EntityLivingBase) (Object) this instanceof EntityPlayerSP) {
-            if (mc.thePlayer.swingProgress > 0F) {
+            if (mc.player.swingProgress > 0F) {
                 p_1101461 = RotationUtils.renderYaw;
             }
             rotationYaw = RotationUtils.renderYaw;
-            mc.thePlayer.rotationYawHead = RotationUtils.renderYaw;
+            mc.player.rotationYawHead = RotationUtils.renderYaw;
         }
-        float f = MathHelper.wrapAngleTo180_float(p_1101461 - ((EntityLivingBase) (Object) this).renderYawOffset);
+        float f = MathHelper.wrapDegrees(p_1101461 - ((EntityLivingBase) (Object) this).renderYawOffset);
         ((EntityLivingBase) (Object) this).renderYawOffset += f * 0.3F;
-        float f1 = MathHelper.wrapAngleTo180_float(rotationYaw - ((EntityLivingBase) (Object) this).renderYawOffset);
+        float f1 = MathHelper.wrapDegrees(rotationYaw - ((EntityLivingBase) (Object) this).renderYawOffset);
         boolean flag = f1 < 90.0F || f1 >= 90.0F;
 
         if (f1 < -75.0F) {
@@ -144,8 +144,8 @@ public abstract class MixinEntityLivingBase extends Entity {
 
         this.motionY = event.getMotionY();
 
-        if (this.raven_XD$isPotionActive(Potion.jump)) {
-            this.motionY += (float) (this.raven_XD$getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F;
+        if (this.raven_XD$isPotionActive(Objects.requireNonNull(Potion.REGISTRY.getObject(new ResourceLocation("minecraft:jump_boost"))))) {
+            this.motionY += (float) (this.raven_XD$getActivePotionEffect(Objects.requireNonNull(Potion.REGISTRY.getObject(new ResourceLocation("minecraft:jump_boost")))).getAmplifier() + 1) * 0.1F;
         }
 
         if (this.isSprinting()) {
@@ -162,7 +162,7 @@ public abstract class MixinEntityLivingBase extends Entity {
 
     @Inject(method = "isPotionActive(Lnet/minecraft/potion/Potion;)Z", at = @At("HEAD"), cancellable = true)
     private void isPotionActive(Potion p_isPotionActive_1_, final CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        if (ModuleManager.potions != null && ModuleManager.potions.isEnabled() && ((p_isPotionActive_1_ == Potion.confusion && ModuleManager.potions.removeNausea.isToggled()) || (p_isPotionActive_1_ == Potion.blindness && ModuleManager.potions.removeBlindness.isToggled()))) {
+        if (ModuleManager.potions != null && ModuleManager.potions.isEnabled() && ((p_isPotionActive_1_ == Potion.REGISTRY.getObject(new ResourceLocation("minecraft:nausea")) && ModuleManager.potions.removeNausea.isToggled()) || (p_isPotionActive_1_ == Potion.REGISTRY.getObject(new ResourceLocation("minecraft:blindness")) && ModuleManager.potions.removeBlindness.isToggled()))) {
             callbackInfoReturnable.setReturnValue(false);
         }
     }
@@ -176,7 +176,7 @@ public abstract class MixinEntityLivingBase extends Entity {
         SwingAnimationEvent swingAnimationEvent = new SwingAnimationEvent(cir.getReturnValue());
         Client.EVENT_BUS.post(swingAnimationEvent);
 
-        cir.setReturnValue((int) (swingAnimationEvent.getAnimationEnd() * Utils.getTimer().timerSpeed));
+        cir.setReturnValue((int) (swingAnimationEvent.getAnimationEnd() * Utils.getTimer().renderPartialTicks));
     }
 
     /**

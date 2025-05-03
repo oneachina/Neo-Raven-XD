@@ -5,6 +5,7 @@ import keystrokesmod.event.player.MoveInputEvent;
 import keystrokesmod.event.player.PreMotionEvent;
 import keystrokesmod.event.player.PreUpdateEvent;
 import keystrokesmod.event.player.RotationEvent;
+import keystrokesmod.minecraft.Vec3;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.impl.movement.TargetStrafe;
 import keystrokesmod.module.setting.impl.ButtonSetting;

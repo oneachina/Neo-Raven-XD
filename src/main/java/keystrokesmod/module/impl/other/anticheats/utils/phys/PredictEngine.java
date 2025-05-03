@@ -24,6 +24,9 @@ public class PredictEngine extends EntityPlayer implements Cloneable {
     private MovementInput movementInput;
     @Setter
     private boolean sprinting = false;
+    private double newPosX;
+    private double newPosY;
+    private double newPosZ;
 
     @Contract(pure = true)
     public PredictEngine(@NotNull TRPlayer player) {
@@ -41,8 +44,8 @@ public class PredictEngine extends EntityPlayer implements Cloneable {
         this.newPosZ = ((EntityLivingBaseAccessor) player.fabricPlayer).getNewPosZ();
         this.rotationYaw = player.fabricPlayer.rotationYaw;
         this.rotationPitch = player.fabricPlayer.rotationPitch;
-        this.newRotationYaw = ((EntityLivingBaseAccessor) player.fabricPlayer).getNewRotationYaw();
-        this.newRotationPitch = ((EntityLivingBaseAccessor) player.fabricPlayer).getNewRotationPitch();
+        this.newRotationYaw = ((EntityLivingBaseAccessor) player.fabricPlayer).neo_Raven_XD_Test$getNewRotationYaw();
+        this.newRotationPitch = ((EntityLivingBaseAccessor) player.fabricPlayer).neo_Raven_XD_Test$getNewRotationPitch();
         this.newPosRotationIncrements = ((EntityLivingBaseAccessor) player.fabricPlayer).getNewPosRotationIncrements();
         this.motionX = player.lastPos.x - player.currentPos.x;
         this.motionY = player.lastPos.y - player.currentPos.y;
@@ -79,7 +82,7 @@ public class PredictEngine extends EntityPlayer implements Cloneable {
                         this.updateItemUse(itemstack, 5);
                     }
 
-                    ((EntityPlayerAccessor) this).setItemInUseCount(this.getItemInUseCount() - 1);
+                    ((EntityPlayerAccessor) this).neo_Raven_XD_Test$setItemInUseCount(this.getItemInUseCount() - 1);
                     if (this.getItemInUseCount() == 0 && !this.worldObj.isRemote) {
                         this.onItemUseFinish();
                     }
