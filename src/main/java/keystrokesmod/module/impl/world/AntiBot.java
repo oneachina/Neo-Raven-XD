@@ -128,26 +128,26 @@ public class AntiBot extends Module {
     }
 
     private static @NotNull List<String> getTablist() {
-        return Client.mc.getNetHandler().getPlayerInfoMap().parallelStream()
+        return Client.mc.player.connection.getPlayerInfoMap().parallelStream()
                 .map(NetworkPlayerInfo::getGameProfile)
-                .filter(profile -> profile.getId() != Client.mc.thePlayer.getUniqueID())
+                .filter(profile -> profile.getId() != Client.mc.player.getUniqueID())
                 .map(GameProfile::getName)
                 .collect(Collectors.toList());
     }
 
     @EventListener
     public void c(final EntityJoinWorldEvent entityJoinWorldEvent) {
-        if (entitySpawnDelay.isToggled() && entityJoinWorldEvent.getEntity() instanceof EntityPlayer && entityJoinWorldEvent.getEntity() != mc.thePlayer) {
+        if (entitySpawnDelay.isToggled() && entityJoinWorldEvent.getEntity() instanceof EntityPlayer && entityJoinWorldEvent.getEntity() != mc.player) {
             entities.put((EntityPlayer) entityJoinWorldEvent.getEntity(), System.currentTimeMillis());
         }
     }
 
     @EventListener
     public void onSendPacket(SendPacketEvent event) {
-        if (cancelBotHit.isToggled() && event.getPacket() instanceof C02PacketUseEntity) {
-            C02PacketUseEntity packet = (C02PacketUseEntity) event.getPacket();
-            if (packet.getAction() == C02PacketUseEntity.Action.ATTACK) {
-                if (isBot(packet.getEntityFromWorld(mc.theWorld))) {
+        if (cancelBotHit.isToggled() && event.getPacket() instanceof CPacketUseEntity) {
+            CPacketUseEntity packet = (CPacketUseEntity) event.getPacket();
+            if (packet.getAction() == CPacketUseEntity.Action.ATTACK) {
+                if (isBot(packet.getEntityFromWorld(mc.world))) {
                     event.cancel();
                 }
             }
@@ -160,7 +160,7 @@ public class AntiBot extends Module {
         }
 
         lastPlayers.clear();
-        for (EntityPlayer p : mc.theWorld.playerEntities) {
+        for (EntityPlayer p : mc.world.playerEntities) {
             if (filteredBot.contains(p)) continue;
 
             String name = p.getName();
@@ -168,7 +168,7 @@ public class AntiBot extends Module {
                 if (debug.isToggled()) Utils.sendMessage("Filtered bot: " + p.getName() + ".");
 
                 EntityPlayer exists = lastPlayers.get(name);
-                Vec3 thePlayer = new Vec3(mc.thePlayer);
+                Vec3 thePlayer = new Vec3(mc.player);
                 double existsDistance = thePlayer.distanceTo(exists);
                 double curDistance = thePlayer.distanceTo(p);
 

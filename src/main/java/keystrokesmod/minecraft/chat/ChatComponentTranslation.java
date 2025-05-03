@@ -2,6 +2,9 @@ package keystrokesmod.minecraft.chat;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import net.minecraft.client.resources.I18n; // 新增导入 I18n 类
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
@@ -13,49 +16,46 @@ public class ChatComponentTranslation extends ChatComponentStyle {
     private final String key;
     private final Object[] formatArgs;
     private final Object syncLock = new Object();
-    private long lastTranslationUpdateTimeInMilliseconds = -1L;
+    // 移除 lastTranslationUpdateTimeInMilliseconds 相关逻辑
+    // private long lastTranslationUpdateTimeInMilliseconds = -1L;
     List<IChatComponent> children = Lists.newArrayList();
     public static final Pattern stringVariablePattern = Pattern.compile("%(?:(\\d+)\\$)?([A-Za-z%]|$)");
 
     public ChatComponentTranslation(String p_i45160_1_, Object... p_i45160_2_) {
         this.key = p_i45160_1_;
         this.formatArgs = p_i45160_2_;
-        Object[] lvt_3_1_ = p_i45160_2_;
-        int lvt_4_1_ = lvt_3_1_.length;
-
-        for(int lvt_5_1_ = 0; lvt_5_1_ < lvt_4_1_; ++lvt_5_1_) {
-            Object lvt_6_1_ = lvt_3_1_[lvt_5_1_];
+        // 移除冗余局部变量
+        for (Object lvt_6_1_ : p_i45160_2_) {
             if (lvt_6_1_ instanceof IChatComponent) {
                 ((IChatComponent)lvt_6_1_).getChatStyle().setParentStyle(this.getChatStyle());
             }
         }
-
     }
 
     synchronized void ensureInitialized() {
         synchronized(this.syncLock) {
-            long lvt_2_1_ = StatCollector.getLastTranslationUpdateTimeInMilliseconds();
-            if (lvt_2_1_ == this.lastTranslationUpdateTimeInMilliseconds) {
-                return;
-            }
-
-            this.lastTranslationUpdateTimeInMilliseconds = lvt_2_1_;
+            // 移除 StatCollector.getLastTranslationUpdateTimeInMilliseconds 相关逻辑
+            // long lvt_2_1_ = StatCollector.getLastTranslationUpdateTimeInMilliseconds();
+            // if (lvt_2_1_ == this.lastTranslationUpdateTimeInMilliseconds) {
+            //     return;
+            // }
+            // this.lastTranslationUpdateTimeInMilliseconds = lvt_2_1_;
             this.children.clear();
         }
 
         try {
-            this.initializeFromFormat(StatCollector.translateToLocal(this.key));
+            this.initializeFromFormat(I18n.format(this.key));
         } catch (ChatComponentTranslationFormatException var6) {
             ChatComponentTranslationFormatException lvt_1_1_ = var6;
             this.children.clear();
 
             try {
-                this.initializeFromFormat(StatCollector.translateToFallback(this.key));
+                // 替换为 I18n.format
+                this.initializeFromFormat(I18n.format(this.key));
             } catch (ChatComponentTranslationFormatException var5) {
                 throw lvt_1_1_;
             }
         }
-
     }
 
     protected void initializeFromFormat(String p_initializeFromFormat_1_) {
@@ -123,7 +123,7 @@ public class ChatComponentTranslation extends ChatComponentStyle {
         }
     }
 
-    public IChatComponent setChatStyle(ChatStyle p_setChatStyle_1_) {
+    public void setChatStyle(ChatStyle p_setChatStyle_1_) {
         super.setChatStyle(p_setChatStyle_1_);
         Object[] lvt_2_1_ = this.formatArgs;
         int lvt_3_1_ = lvt_2_1_.length;
@@ -135,7 +135,8 @@ public class ChatComponentTranslation extends ChatComponentStyle {
             }
         }
 
-        if (this.lastTranslationUpdateTimeInMilliseconds > -1L) {
+        long lastTranslationUpdateTimeInMilliseconds = 0;
+        if (lastTranslationUpdateTimeInMilliseconds > -1L) {
             Iterator lvt_2_2_ = this.children.iterator();
 
             while(lvt_2_2_.hasNext()) {
@@ -144,10 +145,9 @@ public class ChatComponentTranslation extends ChatComponentStyle {
             }
         }
 
-        return this;
     }
 
-    public Iterator<IChatComponent> iterator() {
+    public @NotNull Iterator<IChatComponent> iterator() {
         this.ensureInitialized();
         return Iterators.concat(createDeepCopyIterator(this.children), createDeepCopyIterator(this.siblings));
     }
@@ -176,7 +176,7 @@ public class ChatComponentTranslation extends ChatComponentStyle {
             }
         }
 
-        ChatComponentTranslation lvt_2_2_ = new ChatComponentTranslation(this.key, lvt_1_1_);
+        ChatComponentTranslation lvt_2_2_ = new ChatComponentTranslation(this.key);
         lvt_2_2_.setChatStyle(this.getChatStyle().createShallowCopy());
         Iterator lvt_3_1_ = this.getSiblings().iterator();
 

@@ -1,5 +1,6 @@
 package keystrokesmod.module.impl.movement;
 
+import keystrokesmod.minecraft.Vec3;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.combat.KillAura;
@@ -7,7 +8,6 @@ import keystrokesmod.module.setting.impl.ButtonSetting;
 import keystrokesmod.module.setting.impl.DescriptionSetting;
 import keystrokesmod.module.setting.impl.SliderSetting;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Vec3;
 
 public class KeepSprint extends Module {
     public static ButtonSetting disableWhileJump;
@@ -26,11 +26,11 @@ public class KeepSprint extends Module {
 
     public static void keepSprint(Entity en) {
         boolean vanilla = false;
-        if (disableWhileJump.isToggled() && !mc.thePlayer.onGround) {
+        if (disableWhileJump.isToggled() && !mc.player.onGround) {
             vanilla = true;
-        } else if (reduceReachHits.isToggled() && !mc.thePlayer.capabilities.isCreativeMode) {
+        } else if (reduceReachHits.isToggled() && !mc.player.capabilities.isCreativeMode) {
             double n = -1.0;
-            final Vec3 getPositionEyes = mc.thePlayer.getPositionEyes(1.0f);
+            final Vec3 getPositionEyes = (Vec3) mc.player.getPositionEyes(1.0f);
             if (ModuleManager.killAura != null && ModuleManager.killAura.isEnabled() && KillAura.target != null) {
                 n = getPositionEyes.distanceTo(KillAura.target.getPositionEyes(1.0f));
             } else if (ModuleManager.reach != null && ModuleManager.reach.isEnabled()) {
@@ -43,12 +43,12 @@ public class KeepSprint extends Module {
             vanilla = true;
         }
         if (vanilla) {
-            mc.thePlayer.motionX *= 0.6;
-            mc.thePlayer.motionZ *= 0.6;
+            mc.player.motionX *= 0.6;
+            mc.player.motionZ *= 0.6;
         } else {
             float n2 = (100.0f - (float) slow.getInput()) / 100.0f;
-            mc.thePlayer.motionX *= n2;
-            mc.thePlayer.motionZ *= n2;
+            mc.player.motionX *= n2;
+            mc.player.motionZ *= n2;
         }
     }
 }

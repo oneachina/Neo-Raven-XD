@@ -1,6 +1,5 @@
 package keystrokesmod.module.impl.client;
 
-import keystrokesmod.Client;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.client.notification.DefaultNotification;

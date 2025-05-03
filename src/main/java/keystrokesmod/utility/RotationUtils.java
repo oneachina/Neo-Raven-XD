@@ -138,10 +138,10 @@ public class RotationUtils {
             final int n12 = (int) RotationHandler.randomYawFactor.getInput();
             if (n12 != 0) {
                 final int n13 = n12 * 100 + Utils.randomizeInt(-30, 30);
-                n += Utils.randomizeInt(-n13, n13) / 100.0;
+                n += (float) (Utils.randomizeInt(-n13, n13) / 100.0);
             }
         } else if (abs <= 0.04) {
-            n += ((abs > 0.0f) ? 0.01 : -0.01);
+            n += (float) ((abs > 0.0f) ? 0.01 : -0.01);
         }
         return new float[]{n, clampTo90(n2)};
     }
@@ -161,15 +161,15 @@ public class RotationUtils {
     }
 
     public static RayTraceResult rayCast(final double distance, final float yaw, final float pitch) {
-        final Vec3 getPositionEyes = mc.player.getPositionEyes(1.0f);
+        final Vec3 getPositionEyes = (Vec3) mc.player.getPositionEyes(1.0f);
         return rayCast(getPositionEyes, distance, yaw, pitch);
     }
 
-    public static MovingObjectPosition rayTraceCustom(double blockReachDistance, float yaw, float pitch) {
-        final Vec3 vec3 = mc.player.getPositionEyes(1.0F);
+    public static RayTraceResult rayTraceCustom(double blockReachDistance, float yaw, float pitch) {
+        final Vec3 vec3 = (Vec3) mc.player.getPositionEyes(1.0F);
         final Vec3 vec31 = getVectorForRotation(pitch, yaw);
         final Vec3 vec32 = vec3.addVector(vec31.xCoord * blockReachDistance, vec31.yCoord * blockReachDistance, vec31.zCoord * blockReachDistance);
-        return mc.theWorld.rayTraceBlocks(vec3, vec32, false, false, true);
+        return mc.world.rayTraceBlocks(vec3, vec32, false, false, true);
     }
     public static boolean rayCastIgnoreWall(float yaw, float pitch, @NotNull EntityLivingBase target) {
         yaw = toPositive(yaw);
@@ -228,7 +228,7 @@ public class RotationUtils {
             pointZ = from.maxZ;
         } else pointZ = Math.max(to.z(), from.minZ);
 
-        return new keystrokesmod.script.classes.Vec3(pointX, pointY, pointZ);
+        return new Vec3(pointX, pointY, pointZ);
     }
 
     public static EnumFacing getEnumFacing(keystrokesmod.script.classes.@NotNull Vec3 hitPos, @NotNull AxisAlignedBB box) {
@@ -288,15 +288,15 @@ public class RotationUtils {
     public static @NotNull MovingObjectPosition rayCastStrict(final float yaw, final float pitch, final double range) {
         final float partialTicks = Utils.getTimer().renderPartialTicks;
         final Entity entity = mc.player;
-        MovingObjectPosition objectMouseOver;
+        RayTraceResult objectMouseOver;
 
-        if (entity != null && mc.theWorld != null) {
+        if (entity != null && mc.world != null) {
 
             mc.mcProfiler.startSection("pick");
             final double d0 = mc.playerController.getBlockReachDistance();
             objectMouseOver = entity.rayTrace(d0, partialTicks);
             double d1 = d0;
-            final Vec3 vec3 = entity.getPositionEyes(partialTicks);
+            final Vec3 vec3 = (Vec3) entity.getPositionEyes(partialTicks);
             final boolean flag = d0 > range;
 
             if (objectMouseOver != null) {
@@ -308,18 +308,20 @@ public class RotationUtils {
             Entity pointedEntity = null;
             Vec3 vec33 = null;
             final float f = 1.0F;
-            final List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
+            final List<Entity> list = mc.world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().grow(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
             double d2 = d1;
 
             for (final Entity entity1 : list) {
                 final float f1 = entity1.getCollisionBorderSize();
                 final AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand(f1, f1, f1);
-                final MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
+                final RayTraceResult movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
 
-                if (axisalignedbb.isVecInside(vec3)) {
+                net.minecraft.util.math.Vec3d vec3d = new net.minecraft.util.math.Vec3d(vec3.xCoord, vec3.yCoord, vec3.zCoord);
+                // 修改为使用 contains 方法
+                if (axisalignedbb.contains(vec3d)) {
                     if (d2 >= 0.0D) {
                         pointedEntity = entity1;
-                        vec33 = movingobjectposition == null ? vec3 : movingobjectposition.hitVec;
+                        vec33 = movingobjectposition == null ? vec3 : (Vec3) movingobjectposition.hitVec;
                         d2 = 0.0D;
                     }
                 } else if (movingobjectposition != null) {
@@ -327,7 +329,7 @@ public class RotationUtils {
 
                     if (d3 < d2 || d2 == 0.0D) {
                         pointedEntity = entity1;
-                        vec33 = movingobjectposition.hitVec;
+                        vec33 = (Vec3) movingobjectposition.hitVec;
                         d2 = d3;
                     }
                 }

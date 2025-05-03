@@ -1,16 +1,13 @@
 package keystrokesmod.minecraft.chat;
 
-import java.util.Iterator;
+import lombok.Getter;
 
+@Getter
 public class ChatComponentSelector extends ChatComponentStyle {
     private final String selector;
 
     public ChatComponentSelector(String p_i45996_1_) {
         this.selector = p_i45996_1_;
-    }
-
-    public String getSelector() {
-        return this.selector;
     }
 
     public String getUnformattedTextForChat() {
@@ -20,10 +17,8 @@ public class ChatComponentSelector extends ChatComponentStyle {
     public ChatComponentSelector createCopy() {
         ChatComponentSelector lvt_1_1_ = new ChatComponentSelector(this.selector);
         lvt_1_1_.setChatStyle(this.getChatStyle().createShallowCopy());
-        Iterator lvt_2_1_ = this.getSiblings().iterator();
 
-        while(lvt_2_1_.hasNext()) {
-            IChatComponent lvt_3_1_ = (IChatComponent)lvt_2_1_.next();
+        for (IChatComponent lvt_3_1_ : this.getSiblings()) {
             lvt_1_1_.appendSibling(lvt_3_1_.createCopy());
         }
 

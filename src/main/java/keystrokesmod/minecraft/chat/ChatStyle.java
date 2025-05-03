@@ -15,6 +15,7 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 public class ChatStyle {
     private ChatStyle parentStyle;
@@ -259,7 +260,6 @@ public class ChatStyle {
             return false;
         } else {
             ChatStyle chatstyle = (ChatStyle)p_equals_1_;
-            boolean flag;
             if (this.getBold() == chatstyle.getBold() && this.getColor() == chatstyle.getColor() && this.getItalic() == chatstyle.getItalic() && this.getObfuscated() == chatstyle.getObfuscated() && this.getStrikethrough() == chatstyle.getStrikethrough() && this.getUnderlined() == chatstyle.getUnderlined()) {
                 label71: {
                     if (this.getChatClickEvent() != null) {
@@ -286,13 +286,11 @@ public class ChatStyle {
                         break label71;
                     }
 
-                    flag = true;
-                    return flag;
+                    return true;
                 }
             }
 
-            flag = false;
-            return flag;
+            return false;
         }
     }
 
@@ -370,7 +368,7 @@ public class ChatStyle {
                     }
 
                     if (jsonobject.has("color")) {
-                        chatstyle.color = (EnumChatFormatting)p_deserialize_3_.deserialize(jsonobject.get("color"), EnumChatFormatting.class);
+                        chatstyle.color = p_deserialize_3_.deserialize(jsonobject.get("color"), EnumChatFormatting.class);
                     }
 
                     if (jsonobject.has("insertion")) {
@@ -415,26 +413,7 @@ public class ChatStyle {
             if (p_serialize_1_.isEmpty()) {
                 return null;
             } else {
-                JsonObject jsonobject = new JsonObject();
-                if (p_serialize_1_.bold != null) {
-                    jsonobject.addProperty("bold", p_serialize_1_.bold);
-                }
-
-                if (p_serialize_1_.italic != null) {
-                    jsonobject.addProperty("italic", p_serialize_1_.italic);
-                }
-
-                if (p_serialize_1_.underlined != null) {
-                    jsonobject.addProperty("underlined", p_serialize_1_.underlined);
-                }
-
-                if (p_serialize_1_.strikethrough != null) {
-                    jsonobject.addProperty("strikethrough", p_serialize_1_.strikethrough);
-                }
-
-                if (p_serialize_1_.obfuscated != null) {
-                    jsonobject.addProperty("obfuscated", p_serialize_1_.obfuscated);
-                }
+                JsonObject jsonobject = getJsonObject(p_serialize_1_);
 
                 if (p_serialize_1_.color != null) {
                     jsonobject.add("color", p_serialize_3_.serialize(p_serialize_1_.color));
@@ -461,6 +440,30 @@ public class ChatStyle {
 
                 return jsonobject;
             }
+        }
+
+        private static @NotNull JsonObject getJsonObject(ChatStyle p_serialize_1_) {
+            JsonObject jsonobject = new JsonObject();
+            if (p_serialize_1_.bold != null) {
+                jsonobject.addProperty("bold", p_serialize_1_.bold);
+            }
+
+            if (p_serialize_1_.italic != null) {
+                jsonobject.addProperty("italic", p_serialize_1_.italic);
+            }
+
+            if (p_serialize_1_.underlined != null) {
+                jsonobject.addProperty("underlined", p_serialize_1_.underlined);
+            }
+
+            if (p_serialize_1_.strikethrough != null) {
+                jsonobject.addProperty("strikethrough", p_serialize_1_.strikethrough);
+            }
+
+            if (p_serialize_1_.obfuscated != null) {
+                jsonobject.addProperty("obfuscated", p_serialize_1_.obfuscated);
+            }
+            return jsonobject;
         }
     }
 }

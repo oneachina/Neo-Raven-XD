@@ -244,7 +244,7 @@ public class BlockUtils {
         return insideBlock(mc.player.getEntityBoundingBox());
     }
 
-    private static boolean insideBlock(AxisAlignedBB entityBoundingBox) {
+    public static boolean insideBlock(AxisAlignedBB entityBoundingBox) {
         return entityBoundingBox.intersects(mc.player.getEntityBoundingBox());
     }
 

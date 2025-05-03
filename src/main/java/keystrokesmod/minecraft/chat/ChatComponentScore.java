@@ -1,7 +1,5 @@
 package keystrokesmod.minecraft.chat;
 
-import java.util.Iterator;
-
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -30,11 +28,9 @@ public class ChatComponentScore extends ChatComponentStyle {
         if (lvt_1_1_ != null && lvt_1_1_.isAnvilFileSet() && StringUtils.isNullOrEmpty(this.value)) {
             Scoreboard lvt_2_1_ = lvt_1_1_.getWorld(0).getScoreboard();
             ScoreObjective lvt_3_1_ = lvt_2_1_.getObjective(this.objective);
-            if (lvt_2_1_.entityHasObjective(this.name, lvt_3_1_)) {
+            if (lvt_3_1_ != null && lvt_2_1_.entityHasObjective(this.name, lvt_3_1_)) {
                 Score lvt_4_1_ = lvt_2_1_.getOrCreateScore(this.name, lvt_3_1_);
                 this.setValue(String.format("%d", lvt_4_1_.getScorePoints()));
-            } else {
-                this.value = "";
             }
         }
 
@@ -45,10 +41,8 @@ public class ChatComponentScore extends ChatComponentStyle {
         ChatComponentScore lvt_1_1_ = new ChatComponentScore(this.name, this.objective);
         lvt_1_1_.setValue(this.value);
         lvt_1_1_.setChatStyle(this.getChatStyle().createShallowCopy());
-        Iterator lvt_2_1_ = this.getSiblings().iterator();
 
-        while(lvt_2_1_.hasNext()) {
-            IChatComponent lvt_3_1_ = (IChatComponent)lvt_2_1_.next();
+        for (IChatComponent lvt_3_1_ : this.getSiblings()) {
             lvt_1_1_.appendSibling(lvt_3_1_.createCopy());
         }
 

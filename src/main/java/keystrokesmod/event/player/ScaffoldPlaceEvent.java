@@ -1,8 +1,9 @@
 package keystrokesmod.event.player;
 
 import keystrokesmod.eventbus.CancellableEvent;
+import keystrokesmod.minecraft.MovingObjectPosition;
 import lombok.*;
-import net.minecraft.util.MovingObjectPosition;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data

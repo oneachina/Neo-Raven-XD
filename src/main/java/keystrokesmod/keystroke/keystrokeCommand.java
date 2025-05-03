@@ -2,7 +2,10 @@ package keystrokesmod.keystroke;
 
 import keystrokesmod.Client;
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
+import org.jetbrains.annotations.NotNull;
 
 public class keystrokeCommand extends CommandBase {
     public String getCommandName() {
@@ -23,5 +26,18 @@ public class keystrokeCommand extends CommandBase {
 
     public boolean canCommandSenderUseCommand(ICommandSender sender) {
         return true;
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return "";
+    }
+    @Override
+    public @NotNull String getUsage(@NotNull ICommandSender iCommandSender) {
+        return "";
+    }
+    @Override
+    public void execute(@NotNull MinecraftServer minecraftServer, @NotNull ICommandSender iCommandSender, String @NotNull [] strings) throws CommandException {
+
     }
 }

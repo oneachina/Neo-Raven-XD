@@ -16,13 +16,13 @@ public class EyeHeightEvent extends Event {
     }
 
     public double getEyeHeight() {
-        return 1.62 - (mc.thePlayer.lastTickPosY +
-                        (((mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * Utils.getTimer().renderPartialTicks)) - y);
+        return 1.62 - (mc.player.lastTickPosY +
+                        (((mc.player.posY - mc.player.lastTickPosY) * Utils.getTimer().renderPartialTicks)) - y);
     }
 
     public void setEyeHeight(double targetEyeHeight) {
-        this.y = targetEyeHeight - 1.62 + mc.thePlayer.lastTickPosY +
-                ((mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * (double) Utils.getTimer().renderPartialTicks);
+        this.y = targetEyeHeight - 1.62 + mc.player.lastTickPosY +
+                ((mc.player.posY - mc.player.lastTickPosY) * (double) Utils.getTimer().renderPartialTicks);
     }
 
     public void setY(double y) {

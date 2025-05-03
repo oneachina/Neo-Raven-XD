@@ -1,15 +1,24 @@
 buildscript {
     repositories {
+        maven { url = 'https://repo.spongepowered.org/maven' }
         maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' } // 添加快照仓库
+        maven {
+            name = "forge-file"
+            url = "http://files.minecraftforge.net/maven"
+        }
         mavenCentral()
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
-        
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'java'
 apply plugin: 'maven-publish'
 
 version = '1.12.2'
@@ -23,58 +32,89 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
         }
-
         server {
-
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+        }
+    }
+}
+
+configurations {
+    embed
+    compile.extendsFrom embed
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://repo.spongepowered.org/maven'
+    }
+}
+
+mixin {
+    sourceSets {
+        main {
+            ext.refMap = 'mixins.raven.refmap.json'
         }
     }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
+    embed('org.spongepowered:mixin:0.7-SNAPSHOT') {
+        exclude module: 'gson'
+        exclude module: 'guava'
+        exclude module: 'jarjar'
+        exclude module: 'commons-codec'
+        exclude module: 'commons-io'
+        exclude module: 'launchwrapper'
+        exclude module: 'asm-commons'
+        exclude module: 'slf4j-api'
+    }
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation 'org.projectlombok:lombok:1.18.34'
     implementation 'org.jetbrains:annotations:24.1.0'
     implementation files('libraries/fastutil-core-8.5.14.jar')
     implementation files('libraries/json-20220924.jar')
     implementation files('libraries/discord-rpc.jar')
+    implementation group: 'commons-io', name: 'commons-io', version: '2.14.0'
 
-//    embed files('libraries/fastutil-core-8.5.14.jar')
-//    embed files('libraries/json-20220924.jar')
-//    embed files('libraries/discord-rpc.jar')
+    embed files('libraries/fastutil-core-8.5.14.jar')
+    embed files('libraries/json-20220924.jar')
+    embed files('libraries/discord-rpc.jar')
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
 jar {
+    from(configurations.embed.collect {
+        it.isDirectory() ? it : zipTree(it)
+    }) {
+        exclude 'dummyThing',
+                'LICENSE.txt',
+                'LICENSE',
+                'AUTHORS',
+                'README.md',
+                'META-INF/MUMFREY.RSA',
+                'META-INF/maven/**',
+                'org/**/*.html',
+                'release-timestamp.txt',
+                'changelog.txt'
+    }
     manifest {
-        attributes([
-            "Specification-Title": "examplemod",
-            "Specification-Vendor": "examplemodsareus",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"examplemodsareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+        attributes(
+                'MixinConfigs': 'mixins.raven.json',
+                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+                'TweakOrder': 0,
+                "FMLCorePlugin": "keystrokesmod.mixins.MixinLoader",
+                "ForceLoadAsMod": true,
+                'FMLCorePluginContainsFMLMod': true,
+                "ModSide": "CLIENT"
+        )
     }
 }
-
-// Example configuration to allow publishing using the maven-publish task
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar') 
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-//publish.dependsOn('reobfJar')
 
 publishing {
     publications {

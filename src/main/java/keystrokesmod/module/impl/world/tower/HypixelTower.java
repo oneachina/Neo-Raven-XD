@@ -3,6 +3,7 @@ package keystrokesmod.module.impl.world.tower;
 import keystrokesmod.Client;
 import keystrokesmod.event.player.MoveEvent;
 import keystrokesmod.event.player.PreUpdateEvent;
+import keystrokesmod.minecraft.MovingObjectPosition;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.world.Tower;
 import keystrokesmod.module.setting.impl.ButtonSetting;
@@ -13,17 +14,14 @@ import keystrokesmod.script.classes.Vec3;
 import keystrokesmod.utility.*;
 import keystrokesmod.utility.movement.MoveCorrect;
 import net.minecraft.potion.Potion;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
 import keystrokesmod.eventbus.annotations.EventListener;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class HypixelTower extends SubMode<Tower> {
@@ -49,7 +47,7 @@ public class HypixelTower extends SubMode<Tower> {
     }
 
     public static boolean isGoingDiagonally(double amount) {
-        return Math.abs(mc.thePlayer.motionX) > amount && Math.abs(mc.thePlayer.motionZ) > amount;
+        return Math.abs(mc.player.motionX) > amount && Math.abs(mc.player.motionZ) > amount;
     }
 
     public static double randomAmount() {
@@ -58,16 +56,16 @@ public class HypixelTower extends SubMode<Tower> {
 
     @EventListener
     public void onMove(MoveEvent event) throws IllegalAccessException {
-        if (mc.thePlayer.isPotionActive(Potion.jump)) return;
+        if (mc.player.isPotionActive(Objects.requireNonNull(Potion.REGISTRY.getObject(new ResourceLocation("minecraft:jump_boost"))))) return;
         final boolean airUnder = !BlockUtils.insideBlock(
-                mc.thePlayer.getEntityBoundingBox()
+                mc.player.getEntityBoundingBox()
                         .offset(0, -1, 0)
                         .expand(0.3, 0, 0.3)
         );
 
         if (!MoveUtil.isMoving() && parent.canTower()) {
             if (!moveCorrect.isDoneZ()) {
-                if (mc.thePlayer.posY - lastOnGroundY < 1) return;
+                if (mc.player.posY - lastOnGroundY < 1) return;
 
                 MoveUtil.stop();
                 if (!moveCorrect.moveZ(true))
@@ -79,13 +77,13 @@ public class HypixelTower extends SubMode<Tower> {
 
         if ((MoveUtil.speed() > 0.1 && !notWhileMoving.isToggled()) || !MoveUtil.isMoving()) {
             double towerSpeed = isGoingDiagonally(0.1) ? 0.22 : 0.29888888;
-            if (!mc.thePlayer.onGround) {
+            if (!mc.player.onGround) {
                 if (this.towering) {
                     if (this.towerTicks == 2) {
-                        event.setY(Math.floor(mc.thePlayer.posY + 1.0) - mc.thePlayer.posY);
+                        event.setY(Math.floor(mc.player.posY + 1.0) - mc.player.posY);
                     } else if (this.towerTicks == 3) {
                         if (parent.canTower()) {
-                            event.setY(mc.thePlayer.motionY = 0.4198499917984009);
+                            event.setY(mc.player.motionY = 0.4198499917984009);
                             if (MoveUtil.isMoving()) {
                                 MoveUtil.strafe((float) towerSpeed - randomAmount());
                             }
@@ -100,7 +98,7 @@ public class HypixelTower extends SubMode<Tower> {
                 if (this.towering) {
                     this.towerTicks = 0;
                     if (event.getY() > 0.0) {
-                        event.setY(mc.thePlayer.motionY = 0.4198479950428009);
+                        event.setY(mc.player.motionY = 0.4198479950428009);
                         if (MoveUtil.isMoving()) {
                             MoveUtil.strafe((float) towerSpeed - randomAmount());
                         }
@@ -114,13 +112,13 @@ public class HypixelTower extends SubMode<Tower> {
 
     @EventListener(priority = -1)
     public void onPreUpdate(PreUpdateEvent event) {
-        if (mc.thePlayer.onGround) {
-            lastOnGroundY = (int) mc.thePlayer.posY;
+        if (mc.player.onGround) {
+            lastOnGroundY = (int) mc.player.posY;
             deltaPlace = new BlockPos(0, 1, 1);
         }
 
         if (blockPlaceRequest && !Utils.isMoving()) {
-            if (verticalPlaced >= stopOnBlocks.getInput() || mc.thePlayer.onGround) {
+            if (verticalPlaced >= stopOnBlocks.getInput() || mc.player.onGround) {
                 towering = false;
                 blockPlaceRequest = false;
                 verticalPlaced = 0;

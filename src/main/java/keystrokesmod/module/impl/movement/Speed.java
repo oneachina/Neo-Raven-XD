@@ -10,7 +10,7 @@ import keystrokesmod.module.setting.impl.ModeValue;
 import keystrokesmod.module.setting.impl.SliderSetting;
 import keystrokesmod.utility.MoveUtil;
 import keystrokesmod.utility.Utils;
-import net.minecraft.network.play.server.S08PacketPlayerPosLook;
+import net.minecraft.network.play.server.SPacketPlayerPosLook;
 import keystrokesmod.eventbus.annotations.EventListener;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +54,7 @@ public class Speed extends Module {
 
     @EventListener(priority = 1)
     public void onPreUpdate(PreUpdateEvent event) {
-        if (mc.thePlayer.onGround) {
+        if (mc.player.onGround) {
             offGroundTicks = 0;
         } else {
             offGroundTicks++;
@@ -66,15 +66,15 @@ public class Speed extends Module {
 
     @EventListener
     public void onReceivePacket(@NotNull ReceivePacketEvent event) {
-        if (event.getPacket() instanceof S08PacketPlayerPosLook) {
+        if (event.getPacket() instanceof SPacketPlayerPosLook) {
             disableTicks += (int) (tempDisableOnFlag.getInput() * 20);
         }
     }
 
     public boolean noAction() {
         return !Utils.nullCheck()
-                || ((mc.thePlayer.isInWater() || mc.thePlayer.isInLava()) && liquidDisable.isToggled())
-                || (mc.thePlayer.isSneaking() && sneakDisable.isToggled())
+                || ((mc.player.isInWater() || mc.player.isInLava()) && liquidDisable.isToggled())
+                || (mc.player.isSneaking() && sneakDisable.isToggled())
                 || (ModuleManager.invMove.isEnabled() && ModuleManager.invMove.canInvMove() && invMoveDisable.isToggled())
                 || disableTicks > 0;
     }

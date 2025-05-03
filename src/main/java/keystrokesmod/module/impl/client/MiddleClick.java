@@ -10,6 +10,7 @@ import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.item.ItemStack;
 import keystrokesmod.eventbus.annotations.EventListener;
 import keystrokesmod.event.render.Render2DEvent;
+import net.minecraft.util.EnumHand;
 import org.lwjgl.input.Mouse;
 
 public class MiddleClick extends Module {
@@ -49,11 +50,11 @@ public class MiddleClick extends Module {
                 }
                 case 1: {
                     for (int slot = 0; slot <= 8; slot++) {
-                        ItemStack itemInSlot = mc.thePlayer.inventory.getStackInSlot(slot);
-                        if (itemInSlot != null && itemInSlot.getItem() instanceof ItemEnderPearl) {
+                        ItemStack itemInSlot = mc.player.inventory.getStackInSlot(slot);
+                        if (itemInSlot.getItem() instanceof ItemEnderPearl) {
                             prevSlot = SlotHandler.getCurrentSlot();
                             SlotHandler.setCurrentSlot(slot);
-                            mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld, itemInSlot);
+                            mc.playerController.processRightClick(mc.player, mc.world, EnumHand.MAIN_HAND);
                             pearlEvent = 0;
                         }
                     }

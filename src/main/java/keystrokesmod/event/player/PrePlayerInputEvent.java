@@ -24,8 +24,8 @@ public class PrePlayerInputEvent extends CancellableEvent {
 
     public void setSpeed(final double speed, final double motionMultiplier) {
         setFriction((float) (getForward() != 0 && getStrafe() != 0 ? speed * 0.98F : speed));
-        mc.thePlayer.motionX *= motionMultiplier;
-        mc.thePlayer.motionZ *= motionMultiplier;
+        mc.player.motionX *= motionMultiplier;
+        mc.player.motionZ *= motionMultiplier;
     }
 
     public void setSpeed(final double speed) {

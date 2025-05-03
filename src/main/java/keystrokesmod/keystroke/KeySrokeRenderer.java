@@ -10,9 +10,9 @@ import java.io.IOException;
 
 public class KeySrokeRenderer {
     private static final int[] a = new int[]{16777215, 16711680, 65280, 255, 16776960, 11141290};
-    private Minecraft mc = Minecraft.getMinecraft();
-    private KeyStrokeKeyRenderer[] b = new KeyStrokeKeyRenderer[4];
-    private KeyStrokeMouse[] c = new KeyStrokeMouse[2];
+    private final Minecraft mc = Minecraft.getMinecraft();
+    private final KeyStrokeKeyRenderer[] b = new KeyStrokeKeyRenderer[4];
+    private final KeyStrokeMouse[] c = new KeyStrokeMouse[2];
 
     public KeySrokeRenderer() {
         this.b[0] = new KeyStrokeKeyRenderer(this.mc.gameSettings.keyBindForward, 26, 2);
@@ -79,8 +79,7 @@ public class KeySrokeRenderer {
         KeyStrokeKeyRenderer[] var4 = this.b;
         int var5 = var4.length;
 
-        for (int var6 = 0; var6 < var5; ++var6) {
-            KeyStrokeKeyRenderer key = var4[var6];
+        for (KeyStrokeKeyRenderer key : var4) {
             key.renderKey(x, y, textColor);
         }
 
@@ -90,8 +89,7 @@ public class KeySrokeRenderer {
         KeyStrokeMouse[] var4 = this.c;
         int var5 = var4.length;
 
-        for (int var6 = 0; var6 < var5; ++var6) {
-            KeyStrokeMouse button = var4[var6];
+        for (KeyStrokeMouse button : var4) {
             button.n(x, y, textColor);
         }
 

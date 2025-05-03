@@ -13,6 +13,8 @@ import keystrokesmod.utility.i18n.I18nModule;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
@@ -27,7 +29,7 @@ public class Module {
     protected final ArrayList<Setting> settings;
     private final WeakHashSet<Setting> settingsWeak;
     private final String moduleName;
-    private final Module.category moduleCategory;
+    private final category moduleCategory;
     private final @Nullable String toolTip;
     public boolean canBeEnabled = true;
     public boolean ignoreOnSave = false;
@@ -47,11 +49,11 @@ public class Module {
     private int keycode;
     private boolean isToggled = false;
 
-    public Module(String moduleName, Module.category moduleCategory, int keycode) {
+    public Module(String moduleName, category moduleCategory, int keycode) {
         this(moduleName, moduleCategory, keycode, null);
     }
 
-    public Module(String moduleName, Module.category moduleCategory, int keycode, @Nullable String toolTip) {
+    public Module(String moduleName, category moduleCategory, int keycode, @Nullable String toolTip) {
         this.moduleName = moduleName;
         this.prettyName = moduleName;
         this.moduleCategory = moduleCategory;
@@ -65,11 +67,11 @@ public class Module {
             Client.moduleCounter++;
     }
 
-    public Module(String name, Module.category moduleCategory) {
+    public Module(String name, category moduleCategory) {
         this(name, moduleCategory, null);
     }
 
-    public Module(String name, Module.category moduleCategory, String toolTip) {
+    public Module(String name, category moduleCategory, String toolTip) {
         this(name, moduleCategory, 0, toolTip);
     }
 
@@ -213,7 +215,7 @@ public class Module {
         }
     }
 
-    public final Module.category moduleCategory() {
+    public final category moduleCategory() {
         return this.moduleCategory;
     }
 
@@ -226,12 +228,28 @@ public class Module {
     public void toggle() {
         if (this.isEnabled()) {
             this.disable();
-            if (Settings.toggleSound.getInput() != 0) mc.thePlayer.playSound(Settings.getToggleSound(false), 1, 1);
+            if (Settings.toggleSound.getInput() != 0) {
+                // 获取音效名称
+                @NotNull String soundName = Settings.getToggleSound(false);
+                // 将音效名称转换为 SoundEvent 对象
+                SoundEvent soundEvent = SoundEvent.REGISTRY.getObject(new ResourceLocation(soundName));
+                if (soundEvent != null) {
+                    mc.player.playSound(soundEvent, 1.0F, 1.0F);
+                }
+            }
             if (Notifications.moduleToggled.isToggled() && !(this instanceof Gui))
                 Notifications.sendNotification(Notifications.NotificationTypes.INFO, "§4Disabled " + this.getPrettyName());
         } else {
             this.enable();
-            if (Settings.toggleSound.getInput() != 0) mc.thePlayer.playSound(Settings.getToggleSound(true), 1, 1);
+            if (Settings.toggleSound.getInput() != 0) {
+                // 获取音效名称
+                String soundName = Settings.getToggleSound(true);
+                // 将音效名称转换为 SoundEvent 对象
+                SoundEvent soundEvent = SoundEvent.REGISTRY.getObject(new ResourceLocation(soundName));
+                if (soundEvent != null) {
+                    mc.player.playSound(soundEvent, 1.0F, 1.0F);
+                }
+            }
             if (Notifications.moduleToggled.isToggled() && !(this instanceof Gui))
                 Notifications.sendNotification(Notifications.NotificationTypes.INFO, "§2Enabled " + this.getPrettyName());
         }

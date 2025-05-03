@@ -19,6 +19,7 @@ import keystrokesmod.utility.render.GradientBlur;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -91,7 +92,7 @@ public class ClickGui extends GuiScreen {
     public void initGui() {
         super.initGui();
         this.sr = new ScaledResolution(this.mc);
-        (this.c = new GuiTextField(1, this.mc.fontRendererObj, 22, this.height - 100, 150, 20)).setMaxStringLength(256);
+        (this.c = new GuiTextField(1, this.mc.fontRenderer, 22, this.height - 100, 150, 20)).setMaxStringLength(256);
         this.buttonList.add(this.s = new GuiButtonExt(2, 22, this.height - 70, 150, 20, "Send"));
         this.s.visible = CommandLine.a;
     }
@@ -149,7 +150,7 @@ public class ClickGui extends GuiScreen {
 
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
         if (!Gui.removePlayerModel.isToggled()) {
-            GuiInventory.drawEntityOnScreen(this.width + 15 - this.aE.getValueInt(0, 40, 2), this.height - 10, 40, (float) (this.width - 25 - x), (float) (this.height - 50 - y), this.mc.thePlayer);
+            GuiInventory.drawEntityOnScreen(this.width + 15 - this.aE.getValueInt(0, 40, 2), this.height - 10, 40, (float) (this.width - 25 - x), (float) (this.height - 50 - y), this.mc.player);
         }
 
 
@@ -174,8 +175,8 @@ public class ClickGui extends GuiScreen {
             drawRect(r - 1, 0, r, this.height, -1);
             Commands.rc(getFont(), this.height, r, this.sr.getScaleFactor());
             int x2 = r - 178;
-            this.c.xPosition = x2;
-            this.s.xPosition = x2;
+            this.c.x = x2;
+            this.s.x = x2;
             this.c.drawTextBox();
             super.drawScreen(x, y, p);
         } else if (CommandLine.b) {
@@ -290,7 +291,7 @@ public class ClickGui extends GuiScreen {
         }
     }
 
-    public void actionPerformed(GuiButton b) {
+    public void actionPerformed(@NotNull GuiButton b) {
         if (b == this.s) {
             Commands.rCMD(this.c.getText());
             this.c.setText("");

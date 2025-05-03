@@ -6,6 +6,7 @@ import keystrokesmod.utility.clicks.CPSCalculator;
 import keystrokesmod.Client;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import org.jetbrains.annotations.NotNull;
 
 public class KeyStrokeConfigGui extends GuiScreen {
     private static final String[] colors = new String[]{"White", "Red", "Green", "Blue", "Yellow", "Purple", "Rainbow"};
@@ -29,7 +30,7 @@ public class KeyStrokeConfigGui extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
-    protected void actionPerformed(GuiButton button) {
+    protected void actionPerformed(@NotNull GuiButton button) {
         if (button == this.modeBtn) {
             KeyStroke.e = !KeyStroke.e;
             this.modeBtn.displayString = "Mod: " + (KeyStroke.e ? "Enabled" : "Disabled");
@@ -49,7 +50,7 @@ public class KeyStrokeConfigGui extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int button) {
         try {
             super.mouseClicked(mouseX, mouseY, button);
-        } catch (IOException var9) {
+        } catch (IOException ignored) {
         }
 
         if (button == 0) {

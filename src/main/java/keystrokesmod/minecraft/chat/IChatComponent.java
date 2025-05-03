@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface IChatComponent extends Iterable<IChatComponent> {
-    IChatComponent setChatStyle(ChatStyle var1);
+    void setChatStyle(ChatStyle var1);
 
     ChatStyle getChatStyle();
 
@@ -88,9 +88,9 @@ public interface IChatComponent extends Iterable<IChatComponent> {
                             }
                         }
 
-                        ichatcomponent = new ChatComponentTranslation(s, aobject);
+                        ichatcomponent = new ChatComponentTranslation(s);
                     } else {
-                        ichatcomponent = new ChatComponentTranslation(s, new Object[0]);
+                        ichatcomponent = new ChatComponentTranslation(s);
                     }
                 } else if (jsonobject.has("score")) {
                     JsonObject jsonobject1 = jsonobject.getAsJsonObject("score");

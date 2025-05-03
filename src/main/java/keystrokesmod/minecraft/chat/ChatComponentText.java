@@ -1,7 +1,5 @@
 package keystrokesmod.minecraft.chat;
 
-import java.util.Iterator;
-
 public class ChatComponentText extends ChatComponentStyle {
     private final String text;
 
@@ -20,10 +18,8 @@ public class ChatComponentText extends ChatComponentStyle {
     public ChatComponentText createCopy() {
         ChatComponentText lvt_1_1_ = new ChatComponentText(this.text);
         lvt_1_1_.setChatStyle(this.getChatStyle().createShallowCopy());
-        Iterator lvt_2_1_ = this.getSiblings().iterator();
 
-        while(lvt_2_1_.hasNext()) {
-            IChatComponent lvt_3_1_ = (IChatComponent)lvt_2_1_.next();
+        for (IChatComponent lvt_3_1_ : this.getSiblings()) {
             lvt_1_1_.appendSibling(lvt_3_1_.createCopy());
         }
 

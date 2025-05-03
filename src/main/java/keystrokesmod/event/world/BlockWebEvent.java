@@ -5,7 +5,7 @@ import keystrokesmod.eventbus.CancellableEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 @Getter
 @AllArgsConstructor

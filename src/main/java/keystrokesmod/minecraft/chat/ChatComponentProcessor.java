@@ -1,6 +1,5 @@
 package keystrokesmod.minecraft.chat;
 
-import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -8,7 +7,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.EntityNotFoundException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.command.EntitySelector;
 import net.minecraft.server.MinecraftServer; // 新增导入
 
 public class ChatComponentProcessor {
@@ -17,16 +16,21 @@ public class ChatComponentProcessor {
         if (p_processComponent_1_ instanceof ChatComponentScore) {
             ChatComponentScore lvt_4_1_ = (ChatComponentScore)p_processComponent_1_;
             String lvt_5_1_ = lvt_4_1_.getName();
-            if (PlayerSelector.hasArguments(lvt_5_1_)) {
+            if (EntitySelector.isSelector(lvt_5_1_)) {
                 try {
                     // 获取 MinecraftServer 实例
                     MinecraftServer server = p_processComponent_0_.getServer();
-                    List<Entity> lvt_6_1_ = CommandBase.getEntityList(server, p_processComponent_0_, lvt_5_1_);
+                    List<Entity> lvt_6_1_ = null;
+                    if (server != null) {
+                        lvt_6_1_ = CommandBase.getEntityList(server, p_processComponent_0_, lvt_5_1_);
+                    }
 //                    if (lvt_6_1_.size() != 1) {
 //                        throw new EntityNotFoundException(CommandException.getMessage());
 //                    }
 
-                    lvt_5_1_ = lvt_6_1_.get(0).getName();
+                    if (lvt_6_1_ != null) {
+                        lvt_5_1_ = lvt_6_1_.get(0).getName();
+                    }
                 } catch (CommandException e) {
                     throw new EntityNotFoundException(e.getMessage());
                 }
@@ -68,22 +72,23 @@ public class ChatComponentProcessor {
                 }
             }
 
-            lvt_3_1_ = new ChatComponentTranslation(((ChatComponentTranslation)p_processComponent_1_).getKey(), lvt_4_3_);
+            lvt_3_1_ = new ChatComponentTranslation(((ChatComponentTranslation)p_processComponent_1_).getKey());
         }
 
         ChatStyle lvt_4_4_ = p_processComponent_1_.getChatStyle();
         if (lvt_4_4_ != null) {
-            ((IChatComponent)lvt_3_1_).setChatStyle(lvt_4_4_.createShallowCopy());
+            if (lvt_3_1_ != null) {
+                lvt_3_1_.setChatStyle(lvt_4_4_.createShallowCopy());
+            }
         }
 
-        Iterator lvt_5_3_ = p_processComponent_1_.getSiblings().iterator();
-
-        while(lvt_5_3_.hasNext()) {
-            IChatComponent lvt_6_3_ = (IChatComponent)lvt_5_3_.next();
-            ((IChatComponent)lvt_3_1_).appendSibling(processComponent(p_processComponent_0_, lvt_6_3_, p_processComponent_2_));
+        for (IChatComponent lvt_6_3_ : p_processComponent_1_.getSiblings()) {
+            if (lvt_3_1_ != null) {
+                lvt_3_1_.appendSibling(processComponent(p_processComponent_0_, lvt_6_3_, p_processComponent_2_));
+            }
         }
 
-        return (IChatComponent)lvt_3_1_;
+        return lvt_3_1_;
     }
 }
 

@@ -4,8 +4,6 @@ import keystrokesmod.clickgui.components.Component;
 import keystrokesmod.module.impl.client.Gui;
 import keystrokesmod.module.setting.Setting;
 import keystrokesmod.module.setting.impl.DescriptionSetting;
-import keystrokesmod.utility.Theme;
-import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 

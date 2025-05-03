@@ -13,7 +13,8 @@ import keystrokesmod.utility.Utils;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.play.server.S02PacketChat;
+import net.minecraft.network.play.server.SPacketChat;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -35,8 +36,8 @@ public final class EventDispatcher {
 
     @EventListener
     public void onReceivePacket(@NotNull ReceivePacketEvent event) {
-        if (event.getPacket() instanceof S02PacketChat) {
-            S02PacketChat packet = (S02PacketChat) event.getPacket();
+        if (event.getPacket() instanceof SPacketChat) {
+            SPacketChat packet = (SPacketChat) event.getPacket();
             Client.EVENT_BUS.post(new ClientChatReceivedEvent(packet.getChatComponent(), packet.getType()));
         }
     }
@@ -45,8 +46,8 @@ public final class EventDispatcher {
     public void onPreTick(PreTickEvent event) {
         if (!Utils.nullCheck()) return;
 
-        if (mc.theWorld != lastWorld) {
-            lastWorld = mc.theWorld;
+        if (mc.world != lastWorld) {
+            lastWorld = mc.world;
             Client.EVENT_BUS.post(new WorldChangeEvent());
         }
     }
@@ -56,7 +57,7 @@ public final class EventDispatcher {
      */
     @SubscribeEvent
     public void onPreRenderNameTag(RenderLivingEvent.Specials.@NotNull Pre<EntityLivingBase> baseEvent) {
-        PreRenderNameTag event = new PreRenderNameTag(baseEvent.entity, baseEvent.x, baseEvent.y, baseEvent.z);
+        PreRenderNameTag event = new PreRenderNameTag(baseEvent.getEntity(), baseEvent.getX(), baseEvent.getY(), baseEvent.getZ());
         Client.EVENT_BUS.post(event);
         if (event.isCancelled()) {
             baseEvent.setCanceled(true);
@@ -65,35 +66,35 @@ public final class EventDispatcher {
 
     @SubscribeEvent
     public void onEntityJoinWorldEvent(net.minecraftforge.event.entity.@NotNull EntityJoinWorldEvent event) {
-        Client.EVENT_BUS.post(new EntityJoinWorldEvent(event.entity));
+        Client.EVENT_BUS.post(new EntityJoinWorldEvent(event.getEntity()));
     }
 
     @SubscribeEvent
     public void onBlockPlaceEvent(BlockEvent.@NotNull PlaceEvent event) {
-        Client.EVENT_BUS.post(new BlockPlaceEvent(event.player, event.pos, event.state));
+        Client.EVENT_BUS.post(new BlockPlaceEvent(event.getPlayer(), event.getPos(), event.getState()));
     }
 
     @SubscribeEvent
     public void onDrawBlockHighlightEvent(net.minecraftforge.client.event.@NotNull DrawBlockHighlightEvent event) {
         Client.EVENT_BUS.post(new DrawBlockHighlightEvent(
-                event.context, event.player, event.target, event.subID, event.currentItem, event.partialTicks
+                event.getContext(), event.getPlayer(), event.getTarget(), event.getSubID(), event.getPlayer().getHeldItem(EnumHand.MAIN_HAND), event.getPartialTicks()
         ));
     }
 
     @SubscribeEvent
     public void onFOVUpdate(net.minecraftforge.client.event.@NotNull FOVUpdateEvent baseEvent) {
-        if (baseEvent.entity != mc.thePlayer) return;
-        FOVUpdateEvent event = new FOVUpdateEvent(baseEvent.fov, baseEvent.newfov);
+        if (baseEvent.getEntity() != mc.player) return;
+        FOVUpdateEvent event = new FOVUpdateEvent(baseEvent.getFov(), baseEvent.getNewfov());
         Client.EVENT_BUS.post(event);
-        baseEvent.newfov = event.getNewFov();
+        baseEvent.setNewfov(event.getNewFov());
     }
 
     @SubscribeEvent
     public void onPreRenderPlayer(RenderPlayerEvent.@NotNull Pre baseEvent) {
-        if (!(baseEvent.entity instanceof EntityPlayer)) return;
+        if (!(baseEvent.getEntity() instanceof EntityPlayer)) return;
         PreRenderPlayerEvent event = new PreRenderPlayerEvent(
-                (EntityPlayer) baseEvent.entity, baseEvent.renderer, baseEvent.partialRenderTick,
-                baseEvent.x, baseEvent.y, baseEvent.z
+                (EntityPlayer) baseEvent.getEntity(), baseEvent.getRenderer(), baseEvent.getPartialRenderTick(),
+                baseEvent.getX(), baseEvent.getY(), baseEvent.getZ()
         );
         Client.EVENT_BUS.post(event);
         if (event.isCancelled()) {
@@ -103,10 +104,10 @@ public final class EventDispatcher {
 
     @SubscribeEvent
     public void onPostRenderPlayer(RenderPlayerEvent.@NotNull Post baseEvent) {
-        if (!(baseEvent.entity instanceof EntityPlayer)) return;
+        if (!(baseEvent.getEntity() instanceof EntityPlayer)) return;
         Client.EVENT_BUS.post(new PostRenderPlayerEvent(
-                (EntityPlayer) baseEvent.entity, baseEvent.renderer, baseEvent.partialRenderTick,
-                baseEvent.x, baseEvent.y, baseEvent.z
+                (EntityPlayer) baseEvent.getEntity(), baseEvent.getRenderer(), baseEvent.getPartialRenderTick(),
+                baseEvent.getX(), baseEvent.getY(), baseEvent.getZ()
         ));
     }
 }

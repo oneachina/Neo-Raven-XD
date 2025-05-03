@@ -3,6 +3,7 @@ package keystrokesmod.minecraft;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import org.jetbrains.annotations.NotNull;
 
 public class Vec3 extends Vec3d {
     public final double xCoord;
@@ -36,8 +37,8 @@ public class Vec3 extends Vec3d {
         return new Vec3(p_subtractReverse_1_.xCoord - this.xCoord, p_subtractReverse_1_.yCoord - this.yCoord, p_subtractReverse_1_.zCoord - this.zCoord);
     }
 
-    public Vec3 normalize() {
-        double d0 = (double)MathHelper.sqrt(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
+    public @NotNull Vec3 normalize() {
+        double d0 = MathHelper.sqrt(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
         return d0 < 1.0E-4 ? new Vec3(0.0, 0.0, 0.0) : new Vec3(this.xCoord / d0, this.yCoord / d0, this.zCoord / d0);
     }
 
@@ -53,7 +54,7 @@ public class Vec3 extends Vec3d {
         return this.subtract(p_subtract_1_.xCoord, p_subtract_1_.yCoord, p_subtract_1_.zCoord);
     }
 
-    public Vec3 subtract(double p_subtract_1_, double p_subtract_3_, double p_subtract_5_) {
+    public @NotNull Vec3 subtract(double p_subtract_1_, double p_subtract_3_, double p_subtract_5_) {
         return this.addVector(-p_subtract_1_, -p_subtract_3_, -p_subtract_5_);
     }
 
@@ -61,7 +62,7 @@ public class Vec3 extends Vec3d {
         return this.addVector(p_add_1_.xCoord, p_add_1_.yCoord, p_add_1_.zCoord);
     }
 
-    public Vec3 addVector(double p_addVector_1_, double p_addVector_3_, double p_addVector_5_) {
+    public @NotNull Vec3 addVector(double p_addVector_1_, double p_addVector_3_, double p_addVector_5_) {
         return new Vec3(this.xCoord + p_addVector_1_, this.yCoord + p_addVector_3_, this.zCoord + p_addVector_5_);
     }
 
@@ -69,7 +70,7 @@ public class Vec3 extends Vec3d {
         double d0 = p_distanceTo_1_.xCoord - this.xCoord;
         double d1 = p_distanceTo_1_.yCoord - this.yCoord;
         double d2 = p_distanceTo_1_.zCoord - this.zCoord;
-        return (double)MathHelper.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
+        return MathHelper.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
     }
 
     public double squareDistanceTo(Vec3 p_squareDistanceTo_1_) {
@@ -80,7 +81,7 @@ public class Vec3 extends Vec3d {
     }
 
     public double lengthVector() {
-        return (double)MathHelper.sqrt(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
+        return MathHelper.sqrt(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
     }
 
     public Vec3 getIntermediateWithXValue(Vec3 p_getIntermediateWithXValue_1_, double p_getIntermediateWithXValue_2_) {
@@ -119,26 +120,24 @@ public class Vec3 extends Vec3d {
         }
     }
 
-    public String toString() {
+    public @NotNull String toString() {
         return "(" + this.xCoord + ", " + this.yCoord + ", " + this.zCoord + ")";
     }
 
-    public Vec3 rotatePitch(float p_rotatePitch_1_) {
+    public @NotNull Vec3 rotatePitch(float p_rotatePitch_1_) {
         float f = MathHelper.cos(p_rotatePitch_1_);
         float f1 = MathHelper.sin(p_rotatePitch_1_);
-        double d0 = this.xCoord;
         double d1 = this.yCoord * (double)f + this.zCoord * (double)f1;
         double d2 = this.zCoord * (double)f - this.yCoord * (double)f1;
-        return new Vec3(d0, d1, d2);
+        return new Vec3(this.xCoord, d1, d2);
     }
 
-    public Vec3 rotateYaw(float p_rotateYaw_1_) {
+    public @NotNull Vec3 rotateYaw(float p_rotateYaw_1_) {
         float f = MathHelper.cos(p_rotateYaw_1_);
         float f1 = MathHelper.sin(p_rotateYaw_1_);
         double d0 = this.xCoord * (double)f + this.zCoord * (double)f1;
-        double d1 = this.yCoord;
         double d2 = this.zCoord * (double)f - this.xCoord * (double)f1;
-        return new Vec3(d0, d1, d2);
+        return new Vec3(d0, this.yCoord, d2);
     }
 }
 

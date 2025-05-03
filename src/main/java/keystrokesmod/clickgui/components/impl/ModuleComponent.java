@@ -112,17 +112,8 @@ public class ModuleComponent implements IComponent {
         } else if (ModuleManager.clientTheme.test.isToggled() && mod.isEnabled()) {
             RenderUtils.drawRoundedRectangle(this.categoryComponent.getX(), this.categoryComponent.getY() + o, this.categoryComponent.getX() + this.categoryComponent.gw(), this.categoryComponent.getY() + 16 + this.o, 5, Component.NEW_TOGGLE_DEFAULT_COLOR);
         }
-        v((float) this.categoryComponent.getX(), (float) (this.categoryComponent.getY() + this.o), (float) (this.categoryComponent.getX() + this.categoryComponent.gw()), (float) (this.categoryComponent.getY() + 15 + this.o), this.mod.isEnabled() ? this.c2 : -12829381, this.mod.isEnabled() ? this.c2 : -12302777);
-        int button_rgb = ModuleManager.clientTheme.test.isToggled() ? NEW_DISABLED_COLOR : DISABLED_COLOR;
-        if (mod.isEnabled()) {
-            button_rgb = ModuleManager.clientTheme.test.isToggled() ? NEW_ENABLED_COLOR : ENABLED_COLOR;
-        }
-        if (this.mod.script != null && this.mod.script.error) {
-            button_rgb = INVALID_COLOR;
-        }
-        if (this.mod.moduleCategory() == Module.category.profiles && !(this.mod instanceof ProfileManagerModule) && !((ProfileModule) this.mod).saved && Client.currentProfile.getModule() == this.mod) {
-            button_rgb = UNSAVED_COLOR;
-        }
+        v((float) this.categoryComponent.getX(), (float) (this.categoryComponent.getY() + this.o), (float) (this.categoryComponent.getX() + this.categoryComponent.gw()), (float) (this.categoryComponent.getY() + 15 + this.o), this.mod.isEnabled() ? c2 : -12829381, this.mod.isEnabled() ? c2 : -12302777);
+        int button_rgb = getButton_rgb();
         GL11.glPushMatrix();
         if (ModuleManager.clientTheme.test.isToggled()) {
             getFont().drawString(this.mod.getPrettyName(), (float) (this.categoryComponent.getX() + (double) this.categoryComponent.gw() / 2 - getFont().width(this.mod.getPrettyName()) / 2), (float) (this.categoryComponent.getY() + this.o + 4), button_rgb);
@@ -138,6 +129,20 @@ public class ModuleComponent implements IComponent {
                 }
             }
         }
+    }
+
+    private int getButton_rgb() {
+        int button_rgb = ModuleManager.clientTheme.test.isToggled() ? NEW_DISABLED_COLOR : DISABLED_COLOR;
+        if (mod.isEnabled()) {
+            button_rgb = ModuleManager.clientTheme.test.isToggled() ? NEW_ENABLED_COLOR : ENABLED_COLOR;
+        }
+        if (this.mod.script != null && this.mod.script.error) {
+            button_rgb = INVALID_COLOR;
+        }
+        if (this.mod.moduleCategory() == Module.category.profiles && !(this.mod instanceof ProfileManagerModule) && !((ProfileModule) this.mod).saved && Client.currentProfile.getModule() == this.mod) {
+            button_rgb = UNSAVED_COLOR;
+        }
+        return button_rgb;
     }
 
     @Override

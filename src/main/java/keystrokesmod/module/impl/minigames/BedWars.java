@@ -20,9 +20,11 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.item.ItemFireball;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import keystrokesmod.event.network.ClientChatReceivedEvent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 import java.util.List;
@@ -99,7 +101,7 @@ public class BedWars extends Module {
                 Iterator<BlockPos> iterator = this.obsidianPos.iterator();
                 while (iterator.hasNext()) {
                     BlockPos blockPos = iterator.next();
-                    if (!(mc.theWorld.getBlockState(blockPos).getBlock() instanceof BlockObsidian)) {
+                    if (!(mc.world.getBlockState(blockPos).getBlock() instanceof BlockObsidian)) {
                         iterator.remove();
                         continue;
                     }
@@ -115,7 +117,7 @@ public class BedWars extends Module {
         if (!Utils.nullCheck() || e.getEntity() == null) {
             return;
         }
-        if (e.getEntity() == mc.thePlayer) {
+        if (e.getEntity() == mc.player) {
             armoredPlayer.clear();
             lastHeldMap.clear();
         }
@@ -125,31 +127,34 @@ public class BedWars extends Module {
         try {
             if (Utils.getBedwarsStatus() == 2) {
                 if (diamondArmor.isToggled() || enderPearl.isToggled() || obsidian.isToggled()) {
-                    for (EntityPlayer p : mc.theWorld.playerEntities) {
+                    for (EntityPlayer p : mc.world.playerEntities) {
                         if (p == null) {
                             continue;
                         }
-                        if (p == mc.thePlayer) {
+                        if (p == mc.player) {
                             continue;
                         }
                         if (AntiBot.isBot(p)) {
                             continue;
                         }
                         String name = p.getName();
-                        ItemStack item = p.getHeldItem();
+                        ItemStack item = p.getHeldItem(null);
                         if (diamondArmor.isToggled()) {
-                            ItemStack leggings = p.inventory.armorInventory[1];
-                            if (!armoredPlayer.contains(name) && leggings != null && leggings.getItem() != null && leggings.getItem() == Items.diamond_leggings) {
-                                armoredPlayer.add(name);
-                                Utils.sendMessage("&eAlert: &r" + p.getDisplayName().getFormattedText() + " &7has purchased &bDiamond Armor");
-                                ping();
+                            ItemStack leggings = p.inventory.armorInventory.get(1);
+                            if (!armoredPlayer.contains(name)) {
+                                leggings.getItem();
+                                if (leggings.getItem() == Items.DIAMOND_LEGGINGS) {
+                                    armoredPlayer.add(name);
+                                    Utils.sendMessage("&eAlert: &r" + p.getDisplayName().getFormattedText() + " &7has purchased &bDiamond Armor");
+                                    ping();
+                                }
                             }
                         }
                         if (item != null && !lastHeldMap.containsKey(name)) {
                             String itemType = getItemType(item);
                             if (itemType != null) {
                                 lastHeldMap.put(name, itemType);
-                                double distance = Math.round(mc.thePlayer.getDistanceToEntity(p));
+                                double distance = Math.round(mc.player.getDistance(p));
                                 handleAlert(itemType, p.getDisplayName().getFormattedText(), Utils.isWholeNumber(distance) ? (int) distance + "" : String.valueOf(distance));
                             }
                         } else if (lastHeldMap.containsKey(name)) {
@@ -162,11 +167,11 @@ public class BedWars extends Module {
                 }
                 if (whitelistOwnBed.isToggled()) {
                     if (check) {
-                        spawnPos = mc.thePlayer.getPosition();
+                        spawnPos = mc.player.getPosition();
                         check = false;
                     }
                     if (spawnPos != null)
-                        outsideSpawn = mc.thePlayer.getDistanceSq(spawnPos) > MAX_SPAWN_DISTANCE_SQUARED;
+                        outsideSpawn = mc.player.getDistanceSq(spawnPos) > MAX_SPAWN_DISTANCE_SQUARED;
                 } else {
                     outsideSpawn = true;
                 }
@@ -212,7 +217,14 @@ public class BedWars extends Module {
 
     private void ping() {
         if (shouldPing.isToggled()) {
-            mc.thePlayer.playSound("note.pling", 1.0f, 1.0f);
+            // 将音效名称转换为 ResourceLocation 对象
+            ResourceLocation soundLocation = new ResourceLocation("note.pling");
+            // 通过 ResourceLocation 获取对应的 SoundEvent 对象
+            SoundEvent soundEvent = SoundEvent.REGISTRY.getObject(soundLocation);
+            if (soundEvent != null) {
+                // 若 SoundEvent 对象不为空，播放音效
+                mc.player.playSound(soundEvent, 1.0f, 1.0f);
+            }
         }
     }
 
