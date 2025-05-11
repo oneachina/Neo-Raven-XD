@@ -22,7 +22,7 @@ public class DescriptionComponent extends Component {
         super(b);
         this.desc = desc;
         this.x = b.categoryComponent.getX() + b.categoryComponent.gw();
-        this.y = b.categoryComponent.getY() + b.o;
+        this.y = b.categoryComponent.getY() + b.offset;
         this.o = o;
     }
 

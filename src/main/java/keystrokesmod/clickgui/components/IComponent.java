@@ -40,7 +40,7 @@ public interface IComponent {
     default void so(int n) {
     }
 
-    default int gh() {
+    default int return0() {
         return 0;
     }
 

@@ -25,7 +25,7 @@ public class ButtonComponent extends Component {
         this.mod = mod;
         this.buttonSetting = op;
         this.x = b.categoryComponent.getX() + b.categoryComponent.gw();
-        this.y = b.categoryComponent.getY() + b.o;
+        this.y = b.categoryComponent.getY() + b.offset;
         this.o = o;
     }
 
@@ -93,7 +93,7 @@ public class ButtonComponent extends Component {
     public void onClick(int x, int y, int b) {
         if (this.getSetting() != null && !this.getSetting().isVisible()) return;
 
-        if (this.i(x, y) && b == 0 && this.parent.po) {
+        if (this.i(x, y) && b == 0 && this.parent.open) {
             if (this.buttonSetting.isMethodButton) {
                 this.buttonSetting.runMethod();
                 return;

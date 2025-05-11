@@ -25,7 +25,7 @@ public class SliderComponent extends Component {
         super(moduleComponent);
         this.sliderSetting = sliderSetting;
         this.x = moduleComponent.categoryComponent.getX() + moduleComponent.categoryComponent.gw();
-        this.y = moduleComponent.categoryComponent.getY() + moduleComponent.o;
+        this.y = moduleComponent.categoryComponent.getY() + moduleComponent.offset;
         this.o = o;
     }
 
@@ -69,7 +69,7 @@ public class SliderComponent extends Component {
     public void onDrawScreen(int x, int y) {
         this.y = this.parent.categoryComponent.getY() + this.o;
         this.x = this.parent.categoryComponent.getX();
-        double d = Math.min(this.parent.categoryComponent.gw() - 8, (0 >= x - this.x) ? 0 : x - this.x);
+        double d = Math.min(this.parent.categoryComponent.gw() - 8, Math.max(0, x - this.x));
         this.w = (double) (this.parent.categoryComponent.gw() - 8) * (this.sliderSetting.getInput() - this.sliderSetting.getMin()) / (this.sliderSetting.getMax() - this.sliderSetting.getMin());
         if (this.d) {
             if (d == 0.0D) {
@@ -96,11 +96,11 @@ public class SliderComponent extends Component {
     public void onClick(int x, int y, int b) {
         if (this.getSetting() != null && !this.getSetting().isVisible()) return;
 
-        if (this.u(x, y) && b == 0 && this.parent.po) {
+        if (this.u(x, y) && b == 0 && this.parent.open) {
             this.d = true;
         }
 
-        if (this.i(x, y) && b == 0 && this.parent.po) {
+        if (this.i(x, y) && b == 0 && this.parent.open) {
             this.d = true;
         }
 
